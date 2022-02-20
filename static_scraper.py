@@ -34,8 +34,9 @@ CONTRACT = 'dublin'
 STATION_NUM = '{42}'
 STATIONS = f'https://api.jcdecaux.com/vls/v1/stations?contract={CONTRACT}&apiKey={API_KEY}'
 
-db_user = os.environ.get('LOCAL_WORKBENCH_USER')
-db_passwd = os.environ.get('LOCAL_WORKBENCH_PASSWD')
+rds_host = os.environ.get("RDS_HOST")
+rds_user = os.environ.get('RDS_USER')
+rds_passwd = os.environ.get('RDS_PASSWD')
 
 
 def scrape():
@@ -47,7 +48,7 @@ def scrape():
     return r.json()
 
 
-# don't think this function is needed for the static data
+# don't think this is needed for this table but keeping the function here for now in case this changes
 def get_time():
     """Returns a datetime object at the time of function call."""
 
@@ -62,17 +63,24 @@ def get_time():
 try:
     # create connection to DB host
     connection = connect(
-        host="127.0.0.1",
-        user=db_user,
-        passwd=db_passwd,
-        database="dublin_bikes"
+        host=rds_host,
+        port=3306,
+        user=rds_user,
+        passwd=rds_passwd,
+        database="stations"
     )
 
     # if no error connecting to host
     print("Connection successful")
 
+    # initialise cursor object
+    cursor = connection.cursor()
+
     # initialise a row count to act as the index/primary key
     row_count = 0
+
+    # clear table
+    cursor.execute("DELETE FROM static;")
 
     # assign scraped data to new list
     stations = scrape()
@@ -81,18 +89,17 @@ try:
         index = row_count
         number = stations[i]["number"]
         name = stations[i]["name"]
+        address = stations[i]["address"]
         latitude = stations[i]["position"]["lat"]
         longitude = stations[i]["position"]["lng"]
-        timeOfRequest = get_time()
-
-        cursor = connection.cursor()
+        bike_stands = stations[i]["bike_stands"]
 
         # prepare sql statement
-        sql = f'INSERT INTO static (`index`, `number`, `name`, `latitude`, `longitude`) ' \
-             f'VALUES (%s, %s, %s, %s, %s);'
+        sql = f'INSERT INTO static (`index`, `number`, `name`, `address`, `latitude`, `longitude`,' \
+              f' `bike_stands`) VALUES (%s, %s, %s, %s, %s, %s, %s);'
 
         # prepare entries
-        items = [index, number, name, latitude, longitude]
+        items = [index, number, name, address, latitude, longitude, bike_stands]
 
         # execute and apply sql command
         cursor.execute(sql, items)

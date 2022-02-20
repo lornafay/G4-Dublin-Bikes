@@ -35,8 +35,9 @@ CONTRACT = 'dublin'
 STATION_NUM = '{42}'
 STATIONS = f'https://api.jcdecaux.com/vls/v1/stations?contract={CONTRACT}&apiKey={API_KEY}'
 
-db_user = os.environ.get('LOCAL_WORKBENCH_USER')
-db_passwd = os.environ.get('LOCAL_WORKBENCH_PASSWD')
+rds_host = os.environ.get("RDS_HOST")
+rds_user = os.environ.get('RDS_USER')
+rds_passwd = os.environ.get('RDS_PASSWD')
 
 
 def scrape():
@@ -62,17 +63,18 @@ def get_time():
 try:
     # create connection to DB host
     connection = connect(
-        host="127.0.0.1",
-        user=db_user,
-        passwd=db_passwd,
-        database="dublin_bikes"
+        host=rds_host,
+        port=3306,
+        user=rds_user,
+        passwd=rds_passwd,
+        database="stations"
     )
+
+    # initialise cursor object
+    cursor = connection.cursor()
 
     # if no error connecting to host
     print("Connection successful")
-
-    # initialise a row count to act as the index/primary key as all other values will duplicate
-    row_count = 0
 
     # enter infinite loop
     while True:
@@ -80,28 +82,30 @@ try:
         # call scraper and store in new list
         stations = scrape()
 
+        # initialise a row count to act as the index/primary key as all other values will duplicate
+        row_count = 0
+
+        # clear table
+        cursor.execute("DELETE FROM dynamic;")
+
         # for every station
         for i in range(len(stations) - 1):
             # fetch dynamic values for the station entry
             index = row_count
             number = stations[i]["number"]
-            stands_total = stations[i]["bike_stands"]
             stands_available = stations[i]["available_bike_stands"]
             bikes_available = stations[i]["available_bikes"]
             status = stations[i]["status"]
             timeOfRequest = get_time()
 
-            # initialise cursor object
-            cursor = connection.cursor()
-
             # prepare sql statement
-            sql = f"INSERT INTO dynamic (`index`, `number`, `stands_total`, `stands_available`, " \
-                  f"`bikes_available`, `status`, `time`) VALUES (%s, %s, %s, %s, %s, %s, %s);"
+            sql = f"INSERT INTO dynamic (`index`, `number`, `stands_available`, " \
+                  f"`bikes_available`, `status`, `time`) VALUES (%s, %s, %s, %s, %s, %s);"
 
             # prepare entries
-            items = [index, number, stands_total, stands_available, bikes_available, status, timeOfRequest]
+            items = [index, number, stands_available, bikes_available, status, timeOfRequest]
 
-            # execute and apply sql command
+            # execute and apply new sql command
             cursor.execute(sql, items)
             connection.commit()
 
@@ -109,7 +113,7 @@ try:
             row_count += 1
 
         # wait 5 minutes
-        time.sleep(300)
+        time.sleep(10)
 
     # close connection if loop ever ends
     connection.close()
