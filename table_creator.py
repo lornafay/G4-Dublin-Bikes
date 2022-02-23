@@ -1,3 +1,5 @@
+#!/Users/Lorna/opt/anaconda3/envs/comp30830/bin/python
+
 import os
 from mysql.connector import connect, Error
 
@@ -12,7 +14,7 @@ try:
         port=3306,
         user=rds_user,
         passwd=rds_passwd,
-        database="stations"
+        database="dublinbikes"
     )
 
     # if no error connecting to host
@@ -59,6 +61,7 @@ try:
     # execute and apply sql command
     cursor.execute(sql_static)
     cursor.execute(sql_dynamic)
+    cursor.execute(sql_weather)
     connection.commit()
 
     connection.close()

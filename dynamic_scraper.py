@@ -1,3 +1,5 @@
+#!/Users/Lorna/opt/anaconda3/envs/comp30830/bin/python
+
 """
 Scraper for dynamic station data from JCDecaux. Does not use sqlalchemy.
 
@@ -32,7 +34,6 @@ from mysql.connector import connect, Error
 # API key, DB username and password stored as env variables
 API_KEY = os.environ.get('JCD_API')
 CONTRACT = 'dublin'
-STATION_NUM = '{42}'
 STATIONS = f'https://api.jcdecaux.com/vls/v1/stations?contract={CONTRACT}&apiKey={API_KEY}'
 
 rds_host = os.environ.get("RDS_HOST")
@@ -67,7 +68,7 @@ try:
         port=3306,
         user=rds_user,
         passwd=rds_passwd,
-        database="stations"
+        database="dublinbikes"
     )
 
     # initialise cursor object
