@@ -70,7 +70,7 @@ try:
         port=3306,
         user=rds_user,
         passwd=rds_passwd,
-        database=""
+        database="dublinbikes"
     )
 
     # initialise cursor object

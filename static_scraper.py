@@ -68,7 +68,7 @@ try:
         port=3306,
         user=rds_user,
         passwd=rds_passwd,
-        database="stations"
+        database="dublinbikes"
     )
 
     # if no error connecting to host
