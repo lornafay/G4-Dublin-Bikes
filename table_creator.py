@@ -38,23 +38,15 @@ try:
                   f'`status` VARCHAR(50),' \
                   f'`time` DATETIME);'
 
-    #possibly needs to be reviewed (weather API not working yet)
     sql_weather = f'CREATE TABLE IF NOT EXISTS weather (' \
-                  f'`wind_speed_10m` FLOAT,' \
+                  f'`t_2m:C` FLOAT,' \
+                  f'`wind_speed_10m:kmh` FLOAT,' \
                   f'`wind_dir_10m:d` FLOAT,' \
-                  f'`wind_gusts_10m_1h` FLOAT,' \
-                  f'`wind_gusts_10m_24h` FLOAT,' \
-                  f'`t_2m` FLOAT,' \
-                  f'`t_max_2m_24h` FLOAT,'\
-                  f'`t_min_2m_24h` FLOAT,' \
-                  f'`msl_pressure` FLOAT,' \
-                  f'`precip_1h` FLOAT,' \
                   f'`precip_24h:mm` FLOAT,' \
-                  f'`weather_symbol_1h` VARCHAR(50),' \
-                  f'`weather_symbol_24h` VARCHAR(50),' \
-                  f'`uv` FLOAT,' \
-                  f'`sunrise` DATETIME,' \
-                  f'`sunset` DATETIME);'
+                  f'`weather_symbol_1h:idx` FLOAT,' \
+                  f'`uv:idx` FLOAT,' \
+                  f'`sunrise:sql` DATETIME),' \
+                  f'`sunset:sql` DATETIME);'
 
     # execute and apply sql command
     cursor.execute(sql_static)
