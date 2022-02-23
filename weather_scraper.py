@@ -1,4 +1,4 @@
-#!/Users/Lorna/opt/anaconda3/envs/comp30830/bin/python
+#!/home/ubuntu/miniconda3/envs/comp30830/bin/python
 
 """
 Scraper for dynamic station data from M. Does not use sqlalchemy.

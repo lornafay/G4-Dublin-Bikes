@@ -1,5 +1,4 @@
-#!/Users/Lorna/opt/anaconda3/envs/comp30830/bin/python
-
+#!/home/ubuntu/miniconda3/envs/comp30830/bin/python
 import os
 from mysql.connector import connect, Error
 

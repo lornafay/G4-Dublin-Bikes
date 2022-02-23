@@ -1,5 +1,4 @@
-#!/Users/Lorna/opt/anaconda3/envs/comp30830/bin/python
-
+#!/home/ubuntu/miniconda3/envs/comp30830/bin/python
 """
 Scraper for static station data from JCDecaux. Does not use sqlalchemy.
 
