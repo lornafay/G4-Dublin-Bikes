@@ -39,20 +39,51 @@ try:
                   f'`status` VARCHAR(50),' \
                   f'`time` DATETIME);'
 
-    sql_weather = f'CREATE TABLE IF NOT EXISTS weather (' \
-                  f'`t_2m:C` FLOAT,' \
-                  f'`wind_speed_10m:kmh` FLOAT,' \
-                  f'`wind_dir_10m:d` FLOAT,' \
-                  f'`precip_24h:mm` FLOAT,' \
-                  f'`weather_symbol_1h:idx` FLOAT,' \
-                  f'`uv:idx` FLOAT,' \
-                  f'`sunrise:sql` DATETIME),' \
-                  f'`sunset:sql` DATETIME);'
+    sql_current_weather = f'CREATE TABLE IF NOT EXISTS current_weather (' \
+                          f'`dt` INT,' \
+                          f'`sunrise` DATETIME,' \
+                          f'`sunset` DATETIME,' \
+                          f'`temp` FLOAT,' \
+                          f'`feels_like` FLOAT,' \
+                          f'`pressure` FLOAT,' \
+                          f'`humidity` FLOAT,' \
+                          f'`uvi` FLOAT,' \
+                          f'`clouds` FLOAT,' \
+                          f'`wind_speed` FLOAT,' \
+                          f'`wind_gusts` FLOAT,' \
+                          f'`wind_dir` FLOAT,' \
+                          f'`rain` FLOAT,' \
+                          f'`snow` FLOAT,' \
+                          f'`description` VARCHAR(50),' \
+                          f'`icon` VARCHAR(50));'
+
+    sql_minutely_forecast = f'CREATE TABLE IF NOT EXISTS minutely_forecast (' \
+                            f'`dt` INT,' \
+                            f'`precipitation` FLOAT);'
+
+    sql_hourly_forecast = f'CREATE TABLE IF NOT EXISTS hourly_forecast (' \
+                          f'`dt` INT,' \
+                          f'`temp` FLOAT,' \
+                          f'`feels_like` FLOAT,' \
+                          f'`pressure` FLOAT,' \
+                          f'`humidity` FLOAT,' \
+                          f'`uvi` FLOAT,' \
+                          f'`clouds` FLOAT,' \
+                          f'`wind_speed` FLOAT,' \
+                          f'`wind_gusts` FLOAT,' \
+                          f'`wind_dir` FLOAT,' \
+                          f'`probability_precip` FLOAT,' \
+                          f'`rain` FLOAT,' \
+                          f'`snow` FLOAT,' \
+                          f'`description` VARCHAR(50),' \
+                          f'`icon` VARCHAR(50));'
 
     # execute and apply sql command
     cursor.execute(sql_static)
     cursor.execute(sql_dynamic)
-    cursor.execute(sql_weather)
+    cursor.execute(sql_current_weather)
+    cursor.execute(sql_minutely_forecast)
+    cursor.execute(sql_hourly_forecast)
     connection.commit()
 
     connection.close()
