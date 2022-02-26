@@ -31,12 +31,10 @@ from datetime import datetime
 import time
 from mysql.connector import connect, Error
 
-WEATHER_USER = os.environ.get("WEATHER_USER")
-WEATHER_PASSWD = os.environ.get("WEATHER_PASSWD")
+WEATHER_KEY = os.environ.get("WEATHER_KEY")
 
-WEATHER = f'https://{WEATHER_USER}:{WEATHER_PASSWD}@api.meteomatics.com/2022-02-21T00:00:00.000+00:00--2022-02-27T00:00:00.000+00:00:PT10M/' \
-           f'wind_speed_10m:kmh,wind_dir_10m:d,wind_gusts_10m_1h:bft,t_2m:C,t_max_2m_24h:C,precip_1h:mm,' \
-           f'weather_symbol_1h:idx,uv:idx,sunrise:dn,sunset:dn/53.4064939,-6.2870606/json?model=mix'
+WEATHER = f'https://api.openweathermap.org/data/2.5/onecall?lat=53.350140&lon=-6.266155' \
+          f'&units=metric&exclude=daily&appid={WEATHER_KEY}'
 
 
 def scrape():
@@ -82,31 +80,44 @@ try:
     # enter infinite loop
     while True:
 
-        # call scraper and store in new list
-        weather = scrape()
+        # call scraper and store current weather data in new list
+        current = scrape()["current"]
 
         # initialise a row count to act as the index/primary key as all other values will duplicate
         row_count = 0
 
-        # clear table
-        cursor.execute("DELETE FROM dynamic;")
-
         # for every station
-        for i in range(len(weather) - 1):
+        for i in range(len(current)):
+
             # fetch dynamic values for the station entry
             index = row_count
-            number = weather[i]["number"]
-            stands_available = weather[i]["available_bike_stands"]
-            bikes_available = weather[i]["available_bikes"]
-            status = weather[i]["status"]
-            timeOfRequest = get_time()
+            time = current["dt"]
+            sunrise = current["sunrise"]
+            sunset = current["sunset"]
+            temp = current["status"]
+            feels_like = current["feels_like"]
+            pressure = current["pressure"]
+            humidity = current["humidity"]
+            uvi = current["uvi"]
+            clouds = current["clouds"]
+            wind_speed = current["wind_speed"]
+            wind_gusts = current["wind_gusts"]
+            wind_dir = current["wind_dir"]
+            rain = current["rain"]
+            snow = current["snow"]
+            description = current["description"]
+            icon = current["icon"]
 
             # prepare sql statement
-            sql = f"INSERT INTO dynamic (`index`, `number`, `stands_available`, " \
-                  f"`bikes_available`, `status`, `time`) VALUES (%s, %s, %s, %s, %s, %s);"
+            sql = f"INSERT INTO current_weather (`index`, `time`, `sunrise`, " \
+                  f"`sunset`, `temp`, `feels_like`, `pressure`, `humidity`, `uvi`, " \
+                  f"`clouds`, `wind_speed`, `wind_gusts`, `wind_dir`, `rain`, `snow`, " \
+                  f"`description`, `icon`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s," \
+                  f" %s, %s, %s, %s, %s, %s, %s);"
 
             # prepare entries
-            items = [index, number, stands_available, bikes_available, status, timeOfRequest]
+            items = [index, time, sunrise, sunset, temp, feels_like, pressure, humidity, uvi,
+                     clouds, wind_speed, wind_gusts, wind_dir, rain, snow, description, icon]
 
             # execute and apply new sql command
             cursor.execute(sql, items)
@@ -116,7 +127,7 @@ try:
             row_count += 1
 
         # wait 5 minutes
-        time.sleep(10)
+        time.sleep(300)
 
     # close connection if loop ever ends
     connection.close()
