@@ -1,10 +1,10 @@
 #!/home/ubuntu/miniconda3/envs/comp30830/bin/python
 
 """
-Scraper for dynamic station data from M. Does not use sqlalchemy.
+Scraper for current weather data from Open Weather API. Does not use sqlalchemy.
 
 import packages
-initialise variables for API request
+access key variable
 define scrape function
 define time function
 initialise connection to database in variable
