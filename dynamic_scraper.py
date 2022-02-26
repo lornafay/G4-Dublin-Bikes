@@ -88,7 +88,7 @@ try:
 
         # for every station
         for i in range(len(stations)):
-            
+
             # fetch dynamic values for the station entry
             index = row_count
             number = stations[i]["number"]
@@ -112,7 +112,7 @@ try:
             row_count += 1
 
         # wait 5 minutes
-        time.sleep(10)
+        time.sleep(300)
 
     # close connection if loop ever ends
     connection.close()
