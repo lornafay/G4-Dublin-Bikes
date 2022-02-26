@@ -77,20 +77,18 @@ try:
     # if no error connecting to host
     print("Connection successful")
 
+    # initialise a row count to act as the index/primary key as all other values will duplicate
+    row_count = 0
+
     # enter infinite loop
     while True:
 
         # call scraper and store in new list
         stations = scrape()
 
-        # initialise a row count to act as the index/primary key as all other values will duplicate
-        row_count = 0
-
-        # clear table
-        cursor.execute("DELETE FROM dynamic;")
-
         # for every station
-        for i in range(len(stations) - 1):
+        for i in range(len(stations)):
+            
             # fetch dynamic values for the station entry
             index = row_count
             number = stations[i]["number"]
