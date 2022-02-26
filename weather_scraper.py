@@ -86,10 +86,10 @@ try:
         # initialise a row count to act as the index/primary key as all other values will duplicate
         row_count = 0
 
-        # for every station
+        # for every current weather item
         for i in range(len(current)):
 
-            # fetch dynamic values for the station entry
+            # fetch dynamic values for the weather entry
             index = row_count
             time = current["dt"]
             sunrise = current["sunrise"]
