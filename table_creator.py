@@ -1,4 +1,24 @@
 #!/home/ubuntu/miniconda3/envs/comp30830/bin/python
+
+"""
+Python file to create necessary tables for database.
+
+import packages
+access RDS credentials
+try:
+    initialise connection to database in variable
+    create static table
+    create dynamic table
+    create current weather table
+    create minutely forecast table
+    create hourly forcast table
+    execute queries
+    commit queries
+    close connection
+except:
+    print error
+"""
+
 import os
 from mysql.connector import connect, Error
 
