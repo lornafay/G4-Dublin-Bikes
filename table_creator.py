@@ -60,6 +60,7 @@ try:
                   f'`time` DATETIME);'
 
     sql_current_weather = f'CREATE TABLE IF NOT EXISTS current_weather (' \
+                          f'`index` INT,' \
                           f'`dt` INT,' \
                           f'`sunrise` DATETIME,' \
                           f'`sunset` DATETIME,' \
@@ -78,10 +79,12 @@ try:
                           f'`icon` VARCHAR(50));'
 
     sql_minutely_forecast = f'CREATE TABLE IF NOT EXISTS minutely_forecast (' \
+                            f'`index` INT,' \
                             f'`dt` INT,' \
                             f'`precipitation` FLOAT);'
 
     sql_hourly_forecast = f'CREATE TABLE IF NOT EXISTS hourly_forecast (' \
+                          f'`index` INT,' \
                           f'`dt` INT,' \
                           f'`temp` FLOAT,' \
                           f'`feels_like` FLOAT,' \
