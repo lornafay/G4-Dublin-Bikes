@@ -82,6 +82,7 @@ try:
 
         # call scraper and store current weather data in new list
         current = scrape()["current"]
+        print(current)
 
         # initialise a row count to act as the index/primary key as all other values will duplicate
         row_count = 0
@@ -91,33 +92,45 @@ try:
 
             # fetch dynamic values for the weather entry
             index = row_count
-            time = current["dt"]
+            dt = current["dt"]
             sunrise = current["sunrise"]
             sunset = current["sunset"]
-            temp = current["status"]
+            temp = current["temp"]
             feels_like = current["feels_like"]
             pressure = current["pressure"]
             humidity = current["humidity"]
             uvi = current["uvi"]
             clouds = current["clouds"]
             wind_speed = current["wind_speed"]
-            wind_gusts = current["wind_gusts"]
-            wind_dir = current["wind_dir"]
-            rain = current["rain"]
-            snow = current["snow"]
-            description = current["description"]
-            icon = current["icon"]
+            wind_dir = current["wind_deg"]
+            #wind_gusts = current["wind_gust"]
+            #rain = current["rain"]["1h"]
+            #snow = current["snow"]
+            description = current["weather"][0]["description"]
+            icon = current["weather"][0]["icon"]
 
             # prepare sql statement
-            sql = f"INSERT INTO current_weather (`index`, `time`, `sunrise`, " \
+            '''sql = f"INSERT INTO current_weather (`index`, `dt`, `sunrise`, " \
                   f"`sunset`, `temp`, `feels_like`, `pressure`, `humidity`, `uvi`, " \
                   f"`clouds`, `wind_speed`, `wind_gusts`, `wind_dir`, `rain`, `snow`, " \
                   f"`description`, `icon`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s," \
-                  f" %s, %s, %s, %s, %s, %s, %s);"
+                  f" %s, %s, %s, %s, %s, %s, %s);"'''
+
+            sql = f"INSERT INTO current_weather (`index`, `dt`, `sunrise`, " \
+                  f"`sunset`, `temp`, `feels_like`, `pressure`, `humidity`, `uvi`, " \
+                  f"`clouds`, `wind_speed`, `wind_dir`, " \
+                  f"`description`, `icon`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s," \
+                  f" %s, %s, %s, %s);"
 
             # prepare entries
-            items = [index, time, sunrise, sunset, temp, feels_like, pressure, humidity, uvi,
-                     clouds, wind_speed, wind_gusts, wind_dir, rain, snow, description, icon]
+            items = [index, dt, sunrise, sunset, temp, feels_like, pressure, humidity, uvi,
+                     clouds, wind_speed,
+                     #wind_gusts,
+                     wind_dir,
+                     #rain,
+                     #snow,
+                     description, icon]
+
 
             # execute and apply new sql command
             cursor.execute(sql, items)
