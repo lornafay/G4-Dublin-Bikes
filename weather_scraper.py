@@ -78,8 +78,8 @@ try:
         # convert timestamp into a more readable object
        	dt  = datetime.fromtimestamp(current["dt"])
         # fetch dynamic values for the weather entry
-        sunrise = current["sunrise"]
-        sunset = current["sunset"]
+        sunrise = datetime.fromtimestamp(current["sunrise"])
+        sunset = datetime.fromtimestamp(current["sunset"])
         temp = current["temp"]
         feels_like = current["feels_like"]
         pressure = current["pressure"]
