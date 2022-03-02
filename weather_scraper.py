@@ -60,7 +60,7 @@ try:
 
     # initialise cursor object
     cursor = connection.cursor()
-
+    
     # if no error connecting to host
     print("Connection successful")
 
@@ -73,10 +73,11 @@ try:
 
         # initialise a row count to act as the index/primary key as all other values will duplicate
         row_count = 0
-
-        # fetch dynamic values for the weather entry
         index = row_count
-        timestamp = current["dt"]
+        # convert timestamp into a more readable object
+        current["dt"] = datetime.fromtimestamp(current["dt"])
+        dt = current["dt"]
+        # fetch dynamic values for the weather entry
         sunrise = current["sunrise"]
         sunset = current["sunset"]
         temp = current["temp"]
@@ -91,24 +92,19 @@ try:
         icon = current["weather"][0]["icon"]
 
         # check if the response contains wind gust and precipitation data
-        # otherwise assign value of zero
-        if current["wind_gust"]:
-            wind_gust = current["wind_gust"]
-        else:
-            wind_gust = 0.0
+        # otherwise add key with value of zero to object so sql query does not break script
+        if "wind_gust" not in current.keys():
+            current["wind_gust"] = 0.0
 
-        if current["rain"]:
-            rain = current["rain"]["1h"]
-        else:
-            rain = 0.0
+        if "rain" not in current.keys():
+            current["rain"] = 0.0
 
-        if current["snow"]:
-            snow = current["snow"]
-        else:
-            snow = 0.0
+        if "snow" not in current.keys():
+            current["snow"] = 0.0
 
-        # convert timestamp into a more readable object
-        dt = datetime.fromtimestamp(timestamp)
+        wind_gust = current["wind_gust"]
+        rain = current["rain"]
+        snow = current["snow"]
 
         # prepare sql statement
         sql = f"INSERT INTO current_weather (`index`, `dt`, `sunrise`, " \
