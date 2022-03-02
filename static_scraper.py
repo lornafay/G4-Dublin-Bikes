@@ -6,10 +6,11 @@ import packages
 initialise variables for API request
 define scrape function
 define time function
-initialise connection to database in variable
 try:
+    initialise connection to database in variable
     initialise row count
-    store scraped json data in python list
+    initialise endless loop
+        store scraped json data in python list
         initialise for loop (range length of scraped list)
             initialise table entries as variables by accessing list
             create cursor object
@@ -17,6 +18,7 @@ try:
             execute sql command
             commit sql command
             increment row count
+        wait 1 week
     close connection
 except:
     print error
@@ -79,34 +81,38 @@ try:
     # initialise a row count to act as the index/primary key
     row_count = 0
 
-    # clear table
-    cursor.execute("DELETE FROM static;")
+    while True:
+        # clear table
+        cursor.execute("DELETE FROM static;")
 
-    # assign scraped data to new list
-    stations = scrape()
+        # assign scraped data to new list
+        stations = scrape()
 
-    for i in range(len(stations) - 1):
-        index = row_count
-        number = stations[i]["number"]
-        name = stations[i]["name"]
-        address = stations[i]["address"]
-        latitude = stations[i]["position"]["lat"]
-        longitude = stations[i]["position"]["lng"]
-        bike_stands = stations[i]["bike_stands"]
+        for i in range(len(stations) - 1):
+            index = row_count
+            number = stations[i]["number"]
+            name = stations[i]["name"]
+            address = stations[i]["address"]
+            latitude = stations[i]["position"]["lat"]
+            longitude = stations[i]["position"]["lng"]
+            bike_stands = stations[i]["bike_stands"]
 
-        # prepare sql statement
-        sql = f'INSERT INTO static (`index`, `number`, `name`, `address`, `latitude`, `longitude`,' \
-              f' `bike_stands`) VALUES (%s, %s, %s, %s, %s, %s, %s);'
+            # prepare sql statement
+            sql = f'INSERT INTO static (`index`, `number`, `name`, `address`, `latitude`, `longitude`,' \
+                  f' `bike_stands`) VALUES (%s, %s, %s, %s, %s, %s, %s);'
 
-        # prepare entries
-        items = [index, number, name, address, latitude, longitude, bike_stands]
+            # prepare entries
+            items = [index, number, name, address, latitude, longitude, bike_stands]
 
-        # execute and apply sql command
-        cursor.execute(sql, items)
-        connection.commit()
+            # execute and apply sql command
+            cursor.execute(sql, items)
+            connection.commit()
 
-        # increment row count
-        row_count += 1
+            # increment row count
+            row_count += 1
+
+        # scrape once a week
+        time.sleep(604800)
 
     connection.close()
 
