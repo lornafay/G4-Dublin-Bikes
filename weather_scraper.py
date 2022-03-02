@@ -60,9 +60,12 @@ try:
 
     # initialise cursor object
     cursor = connection.cursor()
-    
+
     # if no error connecting to host
     print("Connection successful")
+
+    # initialise a row count to act as the index/primary key as all other values will duplicate
+    row_count = 0
 
     # enter infinite loop
     while True:
@@ -71,12 +74,9 @@ try:
         current = scrape()["current"]
         print(current)
 
-        # initialise a row count to act as the index/primary key as all other values will duplicate
-        row_count = 0
         index = row_count
         # convert timestamp into a more readable object
-        current["dt"] = datetime.fromtimestamp(current["dt"])
-        dt = current["dt"]
+       	dt  = datetime.fromtimestamp(current["dt"])
         # fetch dynamic values for the weather entry
         sunrise = current["sunrise"]
         sunset = current["sunset"]
