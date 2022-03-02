@@ -76,7 +76,7 @@ try:
 
         index = row_count
         # convert timestamp into a more readable object
-       	dt  = datetime.fromtimestamp(current["dt"])
+        dt = datetime.fromtimestamp(current["dt"])
         # fetch dynamic values for the weather entry
         sunrise = datetime.fromtimestamp(current["sunrise"])
         sunset = datetime.fromtimestamp(current["sunset"])
