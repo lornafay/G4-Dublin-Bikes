@@ -77,29 +77,34 @@ try:
     # if no error connecting to host
     print("Connection successful")
 
-    # call scraper and store in new list
-    stations = scrape()
+    while True:
 
-    # for every station
-    for i in range(len(stations)):
+        # call scraper and store in new list
+        stations = scrape()
 
-        # fetch dynamic values for the station entry
-        number = stations[i]["number"]
-        stands_available = stations[i]["available_bike_stands"]
-        bikes_available = stations[i]["available_bikes"]
-        status = stations[i]["status"]
-        timeOfRequest = get_time()
+        # for every station
+        for i in range(len(stations)):
 
-        # prepare sql statement
-        sql = f"INSERT INTO dynamic (`time`, `number`, `stands_available`, " \
-              f"`bikes_available`, `status`) VALUES (%s, %s, %s, %s, %s);"
+            # fetch dynamic values for the station entry
+            number = stations[i]["number"]
+            stands_available = stations[i]["available_bike_stands"]
+            bikes_available = stations[i]["available_bikes"]
+            status = stations[i]["status"]
+            timeOfRequest = get_time()
 
-        # prepare entries
-        items = [timeOfRequest, number, stands_available, bikes_available, status]
+            # prepare sql statement
+            sql = f"INSERT INTO dynamic (`time`, `number`, `stands_available`, " \
+                  f"`bikes_available`, `status`) VALUES (%s, %s, %s, %s, %s);"
 
-        # execute and apply new sql command
-        cursor.execute(sql, items)
-        connection.commit()
+            # prepare entries
+            items = [timeOfRequest, number, stands_available, bikes_available, status]
+
+            # execute and apply new sql command
+            cursor.execute(sql, items)
+            connection.commit()
+
+        # wait 5 minutes
+        time.sleep(300)
 
     # close connection if loop ever ends
     connection.close()
