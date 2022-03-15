@@ -43,7 +43,6 @@ try:
 
     # prepare sql statement
     sql_static = f'CREATE TABLE IF NOT EXISTS static (' \
-                 f'`index` FLOAT,' \
                  f'`number` FLOAT,' \
                  f'`name` VARCHAR(50),' \
                  f'`address` VARCHAR(50),' \
@@ -52,16 +51,14 @@ try:
                  f'`bike_stands` FLOAT);'
 
     sql_dynamic = f'CREATE TABLE IF NOT EXISTS dynamic (' \
-                  f'`index` FLOAT,' \
+                  f'`time` DATETIME,' \
                   f'`number` FLOAT,' \
                   f'`stands_available` FLOAT,' \
                   f'`bikes_available` FLOAT,' \
-                  f'`status` VARCHAR(50),' \
-                  f'`time` DATETIME);'
+                  f'`status` VARCHAR(50));'
 
     sql_current_weather = f'CREATE TABLE IF NOT EXISTS current_weather (' \
-                          f'`index` INT,' \
-                          f'`dt` INT,' \
+                          f'`time` DATETIME,' \
                           f'`sunrise` DATETIME,' \
                           f'`sunset` DATETIME,' \
                           f'`temp` FLOAT,' \
@@ -79,13 +76,11 @@ try:
                           f'`icon` VARCHAR(50));'
 
     sql_minutely_forecast = f'CREATE TABLE IF NOT EXISTS minutely_forecast (' \
-                            f'`index` INT,' \
-                            f'`dt` INT,' \
+                            f'`time` DATETIME,' \
                             f'`precipitation` FLOAT);'
 
     sql_hourly_forecast = f'CREATE TABLE IF NOT EXISTS hourly_forecast (' \
-                          f'`index` INT,' \
-                          f'`dt` INT,' \
+                          f'`time` DATETIME,' \
                           f'`temp` FLOAT,' \
                           f'`feels_like` FLOAT,' \
                           f'`pressure` FLOAT,' \

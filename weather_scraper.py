@@ -44,6 +44,17 @@ def scrape():
     return r.json()
 
 
+def get_time():
+    """Returns a datetime object at the time of function call."""
+
+    # get current timestamp
+    timestamp = time.time()
+    # convert to datetime object and return
+    dt_object = datetime.fromtimestamp(timestamp)
+
+    return dt_object
+
+
 rds_host = os.environ.get("RDS_HOST")
 rds_user = os.environ.get('RDS_USER')
 rds_passwd = os.environ.get('RDS_PASSWD')
@@ -64,19 +75,13 @@ try:
     # if no error connecting to host
     print("Connection successful")
 
-    # initialise a row count to act as the index/primary key as all other values will duplicate
-    row_count = 0
-
     # enter infinite loop
     while True:
 
         # call scraper and store current weather data in new list
         current = scrape()["current"]
-        print(current)
 
-        index = row_count
-        # convert timestamp into a more readable object
-        dt = datetime.fromtimestamp(current["dt"])
+        dt = get_time()
         # fetch dynamic values for the weather entry
         sunrise = datetime.fromtimestamp(current["sunrise"])
         sunset = datetime.fromtimestamp(current["sunset"])
@@ -107,22 +112,19 @@ try:
         snow = current["snow"]
 
         # prepare sql statement
-        sql = f"INSERT INTO current_weather (`index`, `dt`, `sunrise`, " \
+        sql = f"INSERT INTO current_weather (`dt`, `sunrise`, " \
               f"`sunset`, `temp`, `feels_like`, `pressure`, `humidity`, `uvi`, " \
               f"`clouds`, `wind_speed`, `wind_gusts`, `wind_dir`, `rain`, `snow`, " \
-              f"`description`, `icon`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s," \
+              f"`description`, `icon`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s," \
               f" %s, %s, %s, %s, %s, %s, %s);"
 
         # prepare entries
-        items = [index, dt, sunrise, sunset, temp, feels_like, pressure, humidity, uvi,
+        items = [dt, sunrise, sunset, temp, feels_like, pressure, humidity, uvi,
                  clouds, wind_speed, wind_gust, wind_dir, rain, snow, description, icon]
 
         # execute and apply new sql command
         cursor.execute(sql, items)
         connection.commit()
-
-        # increment row count
-        row_count += 1
 
         # wait 5 minutes
         time.sleep(300)

@@ -78,9 +78,6 @@ try:
     # initialise cursor object
     cursor = connection.cursor()
 
-    # initialise a row count to act as the index/primary key
-    row_count = 0
-
     while True:
         # clear table
         cursor.execute("DELETE FROM static;")
@@ -89,7 +86,6 @@ try:
         stations = scrape()
 
         for i in range(len(stations) - 1):
-            index = row_count
             number = stations[i]["number"]
             name = stations[i]["name"]
             address = stations[i]["address"]
@@ -98,21 +94,18 @@ try:
             bike_stands = stations[i]["bike_stands"]
 
             # prepare sql statement
-            sql = f'INSERT INTO static (`index`, `number`, `name`, `address`, `latitude`, `longitude`,' \
-                  f' `bike_stands`) VALUES (%s, %s, %s, %s, %s, %s, %s);'
+            sql = f'INSERT INTO static (`number`, `name`, `address`, `latitude`, `longitude`,' \
+                  f' `bike_stands`) VALUES (%s, %s, %s, %s, %s, %s);'
 
             # prepare entries
-            items = [index, number, name, address, latitude, longitude, bike_stands]
+            items = [number, name, address, latitude, longitude, bike_stands]
 
             # execute and apply sql command
             cursor.execute(sql, items)
             connection.commit()
 
-            # increment row count
-            row_count += 1
-
-        # scrape once a week
-        time.sleep(604800)
+            # wait 1 week
+            time.sleep(604800)
 
     connection.close()
 
