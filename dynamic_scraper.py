@@ -77,42 +77,29 @@ try:
     # if no error connecting to host
     print("Connection successful")
 
-    # initialise a row count to act as the index/primary key as all other values will duplicate
-    row_count = 0
+    # call scraper and store in new list
+    stations = scrape()
 
-    # enter infinite loop
-    while True:
+    # for every station
+    for i in range(len(stations)):
 
-        # call scraper and store in new list
-        stations = scrape()
+        # fetch dynamic values for the station entry
+        number = stations[i]["number"]
+        stands_available = stations[i]["available_bike_stands"]
+        bikes_available = stations[i]["available_bikes"]
+        status = stations[i]["status"]
+        timeOfRequest = get_time()
 
-        # for every station
-        for i in range(len(stations)):
+        # prepare sql statement
+        sql = f"INSERT INTO dynamic (`time`, `number`, `stands_available`, " \
+              f"`bikes_available`, `status`) VALUES (%s, %s, %s, %s, %s);"
 
-            # fetch dynamic values for the station entry
-            index = row_count
-            number = stations[i]["number"]
-            stands_available = stations[i]["available_bike_stands"]
-            bikes_available = stations[i]["available_bikes"]
-            status = stations[i]["status"]
-            timeOfRequest = get_time()
+        # prepare entries
+        items = [timeOfRequest, number, stands_available, bikes_available, status]
 
-            # prepare sql statement
-            sql = f"INSERT INTO dynamic (`index`, `number`, `stands_available`, " \
-                  f"`bikes_available`, `status`, `time`) VALUES (%s, %s, %s, %s, %s, %s);"
-
-            # prepare entries
-            items = [index, number, stands_available, bikes_available, status, timeOfRequest]
-
-            # execute and apply new sql command
-            cursor.execute(sql, items)
-            connection.commit()
-
-            # increment row count
-            row_count += 1
-
-        # wait 5 minutes
-        time.sleep(300)
+        # execute and apply new sql command
+        cursor.execute(sql, items)
+        connection.commit()
 
     # close connection if loop ever ends
     connection.close()
