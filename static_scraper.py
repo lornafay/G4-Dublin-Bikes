@@ -104,8 +104,8 @@ try:
             cursor.execute(sql, items)
             connection.commit()
 
-            # wait 1 week
-            time.sleep(604800)
+        # wait 1 week
+        time.sleep(604800)
 
     connection.close()
 
