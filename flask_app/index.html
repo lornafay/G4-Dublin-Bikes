@@ -5,6 +5,11 @@
     <style>
 
         /* Temporarily styling within html file */
+
+        body {
+	        font-family: Helvetica;
+    	    font-weight: 300
+        }
         
         header, footer, div{
             border: solid 1px;
@@ -16,13 +21,14 @@
             display: flex;
             flex-direction: row;
             align-items: center;
-            justify-content: space-around;
+            justify-content: space-evenly
         }
 
         .box{
             display: flex;
             flex-wrap: wrap;
             padding: 20px;
+            display: inline-block;
         }
 
 
@@ -30,7 +36,15 @@
             margin: 0px 15px;
             list-style-type: none;
         }
-        
+
+        #page_box {
+            width: 300%;
+        }
+
+        #now_logo {
+            float: right;
+        }
+
 
         
     </style>
@@ -41,19 +55,19 @@
          All flex containers (flex direction column within so items are side by side as per wireframes). -->
 
     <header class="container" id="header">
-        <div class="box"><p>Dublin Bikes logo</p></div>
-        <div class="box">
+        <div class="box" class="logo_box"><img id="db_logo" src="images/db_logo.png" width="55%" height="auto"></div>
+        <div class="box" id="page_box">
             <ul class="container">
-                <li class="menu_item">Live station updates</li>
-                <li class="menu_item">Stations</li>
+                <li class="menu_item"><a href="index.html">Live map</a></li>
+                <li class="menu_item"><a href="stations.html">Stations</a></li>
                 <li class="menu_item">Weather</li>
             </ul>
         </div>
-        <div class="box"><p>Now TV logo</p></div>
+        <div class="box" class="logo_box"><img id="now_logo" src="images/now_logo.png" width="85%" height="auto"></div>
     </header>
 
     <div class="container" id="home_container">
-        <div class="box" id="station_list">
+        <div class="box" id="station_side_list">
             <p>Station list</p>
         </div>
         <div class="box" id="map">
