@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <style>
+
+        /* Temporarily styling within html file */
+
+        body {
+	        font-family: Helvetica;
+    	    font-weight: 300
+        }
+        
+        header, footer, div{
+            border: solid 1px;
+            border-color: #000000;
+            margin: 10px;
+        }
+
+        .container{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-evenly
+        }
+
+        .box{
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+            display: inline-block;
+        }
+
+
+        li{
+            margin: 0px 15px;
+            list-style-type: none;
+        }
+
+        #page_box {
+            width: 300%;
+        }
+
+        #now_logo {
+            float: right;
+        }
+
+
+        
+    </style>
+
+</head>
+<body>
+    <!-- Main structure consists of 3 primary divs: header, footer and main content container for map/station list.
+         All flex containers (flex direction column within so items are side by side as per wireframes). -->
+
+    <header class="container" id="header">
+        <div class="box" class="logo_box"><img id="db_logo" src="images/db_logo.png" width="55%" height="auto"></div>
+        <div class="box" id="page_box">
+            <ul class="container">
+                <li class="menu_item"><a href="index.html">Live map</a></li>
+                <li class="menu_item"><a href="stations.html">Stations</a></li>
+                <li class="menu_item">Weather</li>
+            </ul>
+        </div>
+        <div class="box" class="logo_box"><img id="now_logo" src="images/now_logo.png" width="85%" height="auto"></div>
+    </header>
+
+    <div class="container" id="home_container">
+        <div class="box" id="station_side_list">
+            <p>Station list</p>
+        </div>
+        <div class="box" id="map">
+            <p>Map</p>
+        </div>
+    </div>
+    
+    <footer class="container" id="footer">
+        <div class="box">
+            <p>Footer content (if any)</p>
+        </div>
+    </footer>
+</body>
+</html>
