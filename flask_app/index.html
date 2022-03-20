@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <style>
+
+        /* Temporarily styling within html file */
+        
+        header, footer, div{
+            border: solid 1px;
+            border-color: #000000;
+            margin: 10px;
+        }
+
+        .container{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .box{
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+
+
+        li{
+            margin: 0px 15px;
+            list-style-type: none;
+        }
+        
+
+        
+    </style>
+
+</head>
+<body>
+    <!-- Main structure consists of 3 primary divs: header, footer and main content container for map/station list.
+         All flex containers (flex direction column within so items are side by side as per wireframes). -->
+
+    <header class="container" id="header">
+        <div class="box"><p>Dublin Bikes logo</p></div>
+        <div class="box">
+            <ul class="container">
+                <li class="menu_item">Live station updates</li>
+                <li class="menu_item">Stations</li>
+                <li class="menu_item">Weather</li>
+            </ul>
+        </div>
+        <div class="box"><p>Now TV logo</p></div>
+    </header>
+
+    <div class="container" id="home_container">
+        <div class="box" id="station_list">
+            <p>Station list</p>
+        </div>
+        <div class="box" id="map">
+            <p>Map</p>
+        </div>
+    </div>
+    
+    <footer class="container" id="footer">
+        <div class="box">
+            <p>Footer content (if any)</p>
+        </div>
+    </footer>
+</body>
+</html>
