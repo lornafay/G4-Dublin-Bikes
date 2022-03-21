@@ -15,8 +15,8 @@
         <div class="box" class="logo_box"><img id="db_logo" src="{{url_for('static', filename='images/db_logo.png')}}" width="55%" height="auto"></div>
         <div class="box" id="page_box">
             <ul class="container">
-                <li class="menu_item"><a href="index.html">Live map</a></li>
-                <li class="menu_item"><a href="stations.html">Stations</a></li>
+                <li class="menu_item"><a href="{{ url_for('index') }}">Live map</a></li>
+                <li class="menu_item"><a href="{{ url_for('stations') }}">Stations</a></li>
                 <li class="menu_item">Weather</li>
             </ul>
         </div>
