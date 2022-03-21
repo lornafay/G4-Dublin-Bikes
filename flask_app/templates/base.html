@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" >
+    {% block head %}{% endblock %}
+
+</head>
+<body>
+    <!-- Main structure consists of 3 primary divs: header, footer and main content container for map/station list.
+         All flex containers (flex direction column within so items are side by side as per wireframes). -->
+
+    <header class="container" id="header">
+        <div class="box" class="logo_box"><img id="db_logo" src="{{url_for('static', filename='images/db_logo.png')}}" width="55%" height="auto"></div>
+        <div class="box" id="page_box">
+            <ul class="container">
+                <li class="menu_item"><a href="index.html">Live map</a></li>
+                <li class="menu_item"><a href="stations.html">Stations</a></li>
+                <li class="menu_item">Weather</li>
+            </ul>
+        </div>
+        <div class="box" class="logo_box"><img id="now_logo" src="{{url_for('static', filename='images/now_logo.png')}}" width="85%" height="auto"></div>
+        
+    </header>
+
+    <div class="container" id="home_container">
+        {% block body %}{% endblock %}
+    </div>
+    
+    <footer class="container" id="footer">
+        <div class="box">
+            <p>Footer content</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,41 @@
+/* general page styling */
+
+body {
+  font-family: Helvetica;
+  font-weight: 300;
+}
+
+header,
+footer,
+div {
+  border: solid 1px;
+  border-color: #000000;
+  margin: 10px;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.box {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 20px;
+  display: inline-block;
+}
+
+li {
+  margin: 0px 15px;
+  list-style-type: none;
+}
+
+#page_box {
+  width: 300%;
+}
+
+#now_logo {
+  float: right;
+}
