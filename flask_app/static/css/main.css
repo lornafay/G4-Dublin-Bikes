@@ -43,3 +43,13 @@ a {
 #now_logo {
   float: right;
 }
+
+/* weather-specific styling */
+
+#weather_container {
+  width: 80%;
+}
+
+.weather_box {
+  width: 40%;
+}

@@ -15,5 +15,11 @@ def stations():
     return render_template("stations.html")
 
 
+# route when "Weather" seleceted from menu
+@app.route('/weather.html')
+def weather():
+    return render_template("weather.html")
+
+
 if __name__ == "__main__":
     app.run(debug=True)
