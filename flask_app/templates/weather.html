@@ -12,24 +12,24 @@
 
         <!--Container for current weather-->
         <div class="weather_box" id="current_weather">
-            <div class="small_current_box"><p>Currently in Dublin:</p></div>
-            <div class="small_current_box" id="current_icon">current icon</div>
-            <div class="small_current_box" id="current_description">current description</div>
+            <div class="forecast_type"><p>Currently in Dublin</p></div>
+            <div class="half_forecast">
+                <div class="small_current_box" id="current_icon">current icon</div>
+                <div class="small_current_box" id="current_description">current description</div>
+            </div>
         </div>
 
         <!--Container for forecasted weather for next 8 hours-->
         <div class="weather_box" id="forecast_weather">
-            <div class="container"><p>Forecast:</p></div>
+            <div class="forecast_type"><p>Forecast</p></div>
 
             <!--grouping 2-4 and 6-8 for styling purposes-->
             <div class="half_forecast" id="2-4hr_box">
-                <div class= "small_forecast_box" id="2hr"></div>
-                <div class= "small_forecast_box" id="4hr">4hr</div>
-            </div>
-            
-            <div class="half_forecast" id="6-8hr_box">
-                <div class= "small_forecast_box" id="6hr">6hr</div>
-                <div class= "small_forecast_box" id="8hr">8hr</div>
+                <div class= "small_forecast_box"><p class="hr_font">2hr</p><p id="2hr"></p></div>
+                <div class= "small_forecast_box"><p class="hr_font">4hr</p><p id="4hr"></p></div>
+        
+                <div class= "small_forecast_box"><p class="hr_font">6hr</p><p id="6hr"></p></div>
+                <div class= "small_forecast_box"><p class="hr_font">8hr</p><p id="8hr"></p></div>
             </div>
         </div>
 
