@@ -19,14 +19,14 @@ stations_by_key = {station.key: station for station in stations}
 
 @app.route("/")
 def station():
-    return render_template('stations.html', stations=stations)
+    return render_template('index.html', stations=stations)
 
-@app.route("/<station_code>")
+@app.route("/<station_code>") 
 def show_station(station_code):
     station = stations_by_key.get(station_code)
     if station:
         #map file
-        return render_template('stations.html', station=Station)
+        return render_template('map.html', station=station)
     else:
         abort(404)
 
