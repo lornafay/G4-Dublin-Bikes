@@ -6,13 +6,41 @@ $.getJSON("https://api.openweathermap.org/data/2.5/onecall?lat=53.350140&lon=-6.
     var iconURLSuffix = ".png";
 
     // display current weather
-    $('#current_description').html("<p>" + data.current.weather[0].description + "<br><br> " + data.current.temp + "°C</p>");
+
+    var current_time = data.current.dt;
+    // convert to miliseconds
+    var time = new Date(current_time * 1000);
+    console.log(time);
+    var hours = time.getHours();
+    console.log(hours);
+    var minutes = time.getMinutes();
+    console.log(minutes);
+
+    
+
+    $('#current_description').html("<p> <span id='current_time'>" + hours + ":" + minutes + "</span><br><br>"+ data.current.temp + "°C<br><br><span class='description'>" 
+                                        + data.current.weather[0].description + "</span><br><br>rain: " + data.minutely[0].precipitation + "mm</p>");
+
     $('#current_icon').html("<img src='" + iconURLPrefix + data.current.weather[0].icon + iconURLSuffix + "' alt='weather icon'>");
 
     // display forecast weather
-    $("#2hr").html("<p>2hr</p><br><img src='" + iconURLPrefix + data.hourly[2].weather[0].icon + iconURLSuffix + "' alt='weather icon'>" + data.hourly[2].weather[0].description);
-    $("#4hr").html("<p>4hr</p><br><img src='" + iconURLPrefix + data.hourly[4].weather[0].icon + iconURLSuffix + "' alt='weather icon'>" + data.hourly[4].weather[0].description);
-    $("#6hr").html("<p>6hr</p><br><img src='" + iconURLPrefix + data.hourly[6].weather[0].icon + iconURLSuffix + "' alt='weather icon'>" + data.hourly[6].weather[0].description);
-    $("#8hr").html("<p>8hr</p><br><img src='" + iconURLPrefix + data.hourly[8].weather[0].icon + iconURLSuffix + "' alt='weather icon'>" + data.hourly[8].weather[0].description);
+    // 2h forecast
+    $("#2hr").html("<img src='" + iconURLPrefix + data.hourly[2].weather[0].icon + iconURLSuffix
+                                              + "' alt='weather icon'><p><span class='description'>" + data.hourly[2].weather[0].description
+                                              + "</span><br><br>chance of rain: " + data.hourly[2].pop * 100 + "%</p>");
 
+    // 4h forecast
+    $("#4hr").html("<img src='" + iconURLPrefix + data.hourly[4].weather[0].icon + iconURLSuffix
+                                              + "' alt='weather icon'><p><span class='description'>" + data.hourly[4].weather[0].description
+                                              + "</span><br><br>chance of rain: " + data.hourly[4].pop * 100 + "%</p>");
+
+    // 6h forecast
+    $("#6hr").html("<img src='" + iconURLPrefix + data.hourly[6].weather[0].icon + iconURLSuffix
+                                              + "' alt='weather icon'><p><span class='description'>" + data.hourly[6].weather[0].description
+                                              + "</span><br><br>chance of rain: " + data.hourly[6].pop * 100 + "%</p>");
+
+    // 8h forecast
+    $("#8hr").html("<img src='" + iconURLPrefix + data.hourly[8].weather[0].icon + iconURLSuffix
+                                              + "' alt='weather icon'><p><span class='description'>" + data.hourly[8].weather[0].description
+                                              + "</span><br><br>chance of rain: " + data.hourly[8].pop * 100 + "%</p>");
 })
