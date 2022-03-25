@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+    <title>Weather</title>
+
+{% endblock %}
+
+{% block body %} 
+
+    <div class="container" id="weather_container">
+
+        <div class="weather_box" id="current_weather">
+            <div class="small_current_box" id="current_icon">current icon</div>
+            <div class="small_current_box" id="current_description">current description</div>
+        </div>
+
+        <div class="weather_box" id="forecast_weather">
+            <div class="container" id="2-4hr_box">
+                <div class= "small_forecast_box" id="2hr">2hr</div>
+                <div class= "small_forecast_box" id="4hr">4hr</div>
+            </div>
+            
+            <div class="container" id="6-8hr_box">
+                <div class= "small_forecast_box" id="6hr">6hr</div>
+                <div class= "small_forecast_box" id="8hr">8hr</div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
