@@ -21,12 +21,8 @@
                 return response.json();
               }).then(data => {
 
-                console.log("stations", data);
-                console.log("station 1", data.stations[0]);
-
                 var stations = data.stations;
-                console.log("stat", stations);
-                console.log(stations[0]);
+                console.log(stations);
                 // The location of dublin
                 const dublin = { lat: 53.3446983, lng: -6.2661571 };
                 // The map, centered at Dublin
@@ -36,8 +32,8 @@
                 });
                 
                 // loop through stations to add markers
+                // code adapted from lecture slides
                 stations.forEach(station => {
-                  console.log(station.name);
                   var marker = new google.maps.Marker({
                     position: {
                       lat: station.latitude,
@@ -47,10 +43,31 @@
                     title: station.name,
                     station_number: station.number
                     });
+                  
+                  var contentString = '<div id="content"><h1>' + station.number + '. ' + station.name + '</h1>'
+                                  '<div id="station_availability"><p class="station_info">'
+                                  'Status: <span class="station_info_item">' + station.status + '</span><br>'
+                                  'Bikes available: <span class="station_info_item">' + station.bikes_available + '</span><br>'
+                                  'Stands available: <span class="station_info_item">' + station.stands_available + '</span><br>'
+                                  '</p></div></div>';
+
+                  // code to close previous window from stack overflow user Aamir Afridi
+                  // https://stackoverflow.com/questions/2223574/google-maps-auto-close-open-infowindows
+                  var prevWindow = false;
+                  var infoWindow = new google.maps.InfoWindow({
+                    content: contentString
+                  });
+
+                  marker.addListener('click', function(){
+                    // close previous window
+                    if(prevWindow){
+                      prevWindow.close();
+                    }
+                    // open new window
+                    prevWindow = infoWindow;
+                    infoWindow.open(map,marker);
+                  });
                 });
-
-
-
               });
               
             
