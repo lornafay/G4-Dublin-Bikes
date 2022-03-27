@@ -5,47 +5,76 @@
     <title>Live Map</title>
     <style>
         #map {
-        height: 400px;
-        width: 80%;
+        height: 600px;
+        width: 110%;
         border: none;
-       
+        margin: 0px;
+        padding: 0px;
         }
 
+        
        
-        </style>
+    </style>
     <script>
-            
-        function initMap() {
-           // The location of dublin
-           const dublin = { lat: 53.3446983, lng: -6.2661571 };
-           // The map, centered at Uluru
-           const map = new google.maps.Map(document.getElementById("map"), {
-             zoom: 14,
-             center: dublin,
-           });
-           // The marker, positioned in temple bar
-           const marker = new google.maps.Marker({
-             position: dublin,
-             map: map,
-           });
-         }
       
-     </script>
-     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAATWob_anm9tXOgwSN35vcZIal8Q5oZto&callback=initMap" async>
-     var x = document.getElementById("demo");
-     function getLocation() {
-       if (navigator.geolocation) {
-         navigator.geolocation.getCurrentPosition(showPosition);
-       } else {
-         x.innerHTML = "Geolocation is not supported by this browser.";
-       }
-     }
+      fetch("/stations").then(response => {
+                return response.json();
+              }).then(data => {
+
+                console.log("stations", data);
+                console.log("station 1", data.stations[0]);
+
+                var stations = data.stations;
+                console.log("stat", stations);
+                console.log(stations[0]);
+                // The location of dublin
+                const dublin = { lat: 53.3446983, lng: -6.2661571 };
+                // The map, centered at Dublin
+                const map = new google.maps.Map(document.getElementById("map"), {
+                  zoom: 14,
+                  center: dublin,
+                });
+                
+                // loop through stations to add markers
+                stations.forEach(station => {
+                  console.log(station.name);
+                  var marker = new google.maps.Marker({
+                    position: {
+                      lat: station.latitude,
+                      lng: station.longitude
+                    },
+                    map: map,
+                    title: station.name,
+                    station_number: station.number
+                    });
+                });
+
+
+
+              });
+              
+            
+
+        
+      
+      
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAATWob_anm9tXOgwSN35vcZIal8Q5oZto&callback=initMap" async>
+      var x = document.getElementById("demo");
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+          x.innerHTML = "Geolocation is not supported by this browser.";
+        }
+      }
  
      function showPosition(position) {
        x.innerHTML = "Latitude: " + position.coords.latitude +
        "<br>Longitude: " + position.coords.longitude;
      }
      </script>
+
 {% endblock %}
 
 {% block body %}
