@@ -3,12 +3,54 @@
 {% block head %}
 
     <title>Live Map</title>
+    <style>
+        #map {
+        height: 400px;
+        width: 80%;
+        border: none;
+       
+        }
 
+       
+        </style>
+    <script>
+            
+        function initMap() {
+           // The location of dublin
+           const dublin = { lat: 53.3446983, lng: -6.2661571 };
+           // The map, centered at Uluru
+           const map = new google.maps.Map(document.getElementById("map"), {
+             zoom: 14,
+             center: dublin,
+           });
+           // The marker, positioned in temple bar
+           const marker = new google.maps.Marker({
+             position: dublin,
+             map: map,
+           });
+         }
+      
+     </script>
+     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAATWob_anm9tXOgwSN35vcZIal8Q5oZto&callback=initMap" async>
+     var x = document.getElementById("demo");
+     function getLocation() {
+       if (navigator.geolocation) {
+         navigator.geolocation.getCurrentPosition(showPosition);
+       } else {
+         x.innerHTML = "Geolocation is not supported by this browser.";
+       }
+     }
+ 
+     function showPosition(position) {
+       x.innerHTML = "Latitude: " + position.coords.latitude +
+       "<br>Longitude: " + position.coords.longitude;
+     }
+     </script>
 {% endblock %}
 
 {% block body %}
 
-    <div class="box" id="map">
+    <div class="box" id="map" style="border: none;">
         <p>Map</p>
     </div>
 
