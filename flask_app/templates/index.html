@@ -5,14 +5,23 @@
     <title>Live Map</title>
     <style>
         #map {
-        height: 600px;
-        width: 110%;
+        height: 800px;
+        width: 100%;
         border: none;
         margin: 0px;
         padding: 0px;
         }
 
+        #content_window h2, .station_info_item{
+          color: #2c6663;
+        }
+
         
+        .station_info_item{
+          font-weight: 600;
+          margin-left: 5%;
+          float: right;
+        }
        
     </style>
     <script>
@@ -45,26 +54,29 @@
               },
               map: map,
               title: station.name,
-              station_number: station.number
               });
-
-              var contentString = '<div id="content"><h1>' + station.number + '. ' + station.name + '</h1>'
-                                  '<div id="station_availability"><p class="station_info">'
-                                  'Status: <span class="station_info_item">' + station.status + '</span><br>'
-                                  'Bikes available: <span class="station_info_item">' + station.bikes_available + '</span><br>'
-                                  'Stands available: <span class="station_info_item">' + station.stands_available + '</span><br>'
-                                  '</p></div></div>';
 
               // code to add click event and make sure only one window is open at a time found at 
               // https://www.aspsnippets.com/Articles/Google-Maps-API-V3-Open-Show-only-one-InfoWindow-at-a-time-and-close-other-InfoWindow.aspx
-              (function (marker, contentString) {
+              (function (marker) {
                   google.maps.event.addListener(marker, "click", function (e) {
-                      // use content string defined before 
-                      infoWindow.setContent(contentString);
-                      infoWindow.open(map, marker);
+                      
+                    var contentString = '<div id="content_window"><h2>' + station.number + '. ' + station.name + `</h2>
+                                  <table id="station_info">
+                                  <tr><td>Status: </td><td><span class="station_info_item">` + station.status + `</span></td></tr>
+                                  <tr><td>Bikes available: </td><td><span class="station_info_item">` + station.bikes_available + `</span></td></tr>
+                                  <tr><td>Stands available: </td><td><span class="station_info_item">` + station.stands_available + `</span></td></tr>
+                                  </table></div>`;
+
+                    // use content string defined before 
+                    infoWindow.setContent(contentString);
+                    infoWindow.open({
+                      map: map, 
+                      anchor: marker,
+                      maxWidth: 200});
                   });
                 // call function
-              })(marker, contentString);
+              })(marker);
             
           });
         }
@@ -98,7 +110,8 @@
 
     <div class="box" id="map" style="border: none;">
         <p>Map</p>
-        <script src="https://maps.googleapis.com/maps/api/js?key={APIKEY}&callback=initMap" async></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key={API_KEY}}&callback=initMap" async></script>
     </div>
+
 
 {% endblock %}
