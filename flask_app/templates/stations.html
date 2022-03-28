@@ -4,12 +4,24 @@
 
     <title>Stations</title>
 
+    <script>
+
+        fetch("/stations").then(response => {
+            return response.json();
+        }).then(stations => {
+            console.log(stations);
+        })
+        
+    </script>
+
 {% endblock %}
 
 {% block body %} 
 
     <div class="box" id="station_list">
-        <p>Gallery type list of all stations</p>
+        <p>Bike Stations</p>
+        <div id="query"></div>
+
     </div>
 
 {% endblock %}
