@@ -27,20 +27,20 @@ $.getJSON("https://api.openweathermap.org/data/2.5/onecall?lat=53.350140&lon=-6.
     // 2h forecast
     $("#2hr").html("<img src='" + iconURLPrefix + data.hourly[2].weather[0].icon + iconURLSuffix
                                               + "' alt='weather icon'><p><span class='description'>" + data.hourly[2].weather[0].description
-                                              + "</span><br><br>chance of rain: " + data.hourly[2].pop * 100 + "%</p>");
+                                              + "</span><br><br>chance of rain: " + Math.round(data.hourly[2].pop * 100) + "%</p>");
 
     // 4h forecast
     $("#4hr").html("<img src='" + iconURLPrefix + data.hourly[4].weather[0].icon + iconURLSuffix
                                               + "' alt='weather icon'><p><span class='description'>" + data.hourly[4].weather[0].description
-                                              + "</span><br><br>chance of rain: " + data.hourly[4].pop * 100 + "%</p>");
+                                              + "</span><br><br>chance of rain: " + Math.round(data.hourly[4].pop * 100) + "%</p>");
 
     // 6h forecast
     $("#6hr").html("<img src='" + iconURLPrefix + data.hourly[6].weather[0].icon + iconURLSuffix
                                               + "' alt='weather icon'><p><span class='description'>" + data.hourly[6].weather[0].description
-                                              + "</span><br><br>chance of rain: " + data.hourly[6].pop * 100 + "%</p>");
+                                              + "</span><br><br>chance of rain: " + Math.round(data.hourly[6].pop * 100) + "%</p>");
 
     // 8h forecast
     $("#8hr").html("<img src='" + iconURLPrefix + data.hourly[8].weather[0].icon + iconURLSuffix
                                               + "' alt='weather icon'><p><span class='description'>" + data.hourly[8].weather[0].description
-                                              + "</span><br><br>chance of rain: " + data.hourly[8].pop * 100 + "%</p>");
+                                              + "</span><br><br>chance of rain: " + Math.round(data.hourly[8].pop * 100) + "%</p>");
 })

@@ -29,11 +29,12 @@ div {
   justify-content: space-evenly;
 }
 
-.menu_item {
-  border-color: #d4d2cf;
-  box-shadow: 0px 0px 4px 2px #d4d2cf;
-  padding: 15px;
-  font-size: 20px;
+.menu_item a {
+  text-decoration: none;
+  color: #2c6663;
+  font-size: 25px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
 #home_container {
@@ -96,8 +97,6 @@ a {
   display: flex;
   flex-direction: column;
   height: auto;
-  max-width: 90%;
-  justify-content: space-between;
   align-items: center;
 }
 
@@ -132,15 +131,13 @@ a {
   justify-items: baseline;
   justify-content: space-around;
   padding: 10px 30px;
-  box-shadow: 0px 0px 4px 1px #d4d2cf;
   background-color: #f4f7f6;
 }
 
 .small_forecast_box {
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  margin: 20px;
+  padding: 10px 30px;
   font-size: small;
 }
 
