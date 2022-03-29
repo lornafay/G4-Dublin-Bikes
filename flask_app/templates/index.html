@@ -3,27 +3,7 @@
 {% block head %}
 
     <title>Live Map</title>
-    <style>
-        #map {
-        height: 800px;
-        width: 100%;
-        border: none;
-        margin: 0px;
-        padding: 0px;
-        }
-
-        #content_window h2, .station_info_item{
-          color: #2c6663;
-        }
-
-        
-        .station_info_item{
-          font-weight: 600;
-          margin-left: 5%;
-          float: right;
-        }
-       
-    </style>
+    
     <script>
       
       fetch("/stations").then(response => {
@@ -110,7 +90,7 @@
 
     <div class="box" id="map" style="border: none;">
         <p>Map</p>
-        <script src="https://maps.googleapis.com/maps/api/js?key={API_KEY}}&callback=initMap" async></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAATWob_anm9tXOgwSN35vcZIal8Q5oZto&callback=initMap" async></script>
     </div>
 
 
