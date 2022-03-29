@@ -125,7 +125,7 @@ a {
   height: auto;
 }
 
-.half_forecast {
+.hours_forecast {
   display: flex;
   flex-direction: row;
   justify-items: baseline;
