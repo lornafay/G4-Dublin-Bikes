@@ -3,7 +3,7 @@
 {% block head %}
 
     <title>Stations</title>
-    <body>
+    <body onload= "constructTable('#table')">
 <p id="station_list"></p>
 <script src=
 "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
@@ -14,12 +14,8 @@
 {% block body %} 
 
     <div class="box" id="station_list">
-        
-        <button onclick = "constructTable('#table')">
-            Get Stations
-        </button>
 
-        <table margin="0 auto" id="table" border="2"></table>
+        <table margin="0 auto" id="table" border="1"></table>
         <script>
             var x = document.getElementById("station_list");
             
