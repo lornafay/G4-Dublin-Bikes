@@ -4,6 +4,9 @@
 
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" >
+
+    
+    
     {% block head %}{% endblock %}
 
 </head>
@@ -14,24 +17,27 @@
     <header class="container" id="header">
         <div class="box" class="logo_box"><img id="db_logo" src="{{url_for('static', filename='images/db_logo.png')}}" width="55%" height="auto"></div>
         <div class="box" id="page_box">
-            <ul class="container">
+            <ul class="menu">
                 <li class="menu_item"><a href="{{ url_for('index') }}">Live map</a></li>
                 <li class="menu_item"><a href="{{ url_for('stations') }}">Stations</a></li>
                 <li class="menu_item"><a href="{{ url_for('weather') }}">Weather</a></li>
             </ul>
         </div>
-        <div class="box" class="logo_box"><img id="now_logo" src="{{url_for('static', filename='images/now_logo.png')}}" width="85%" height="auto"></div>
+        <div class="box" class="logo_box"><a href="https://www.nowtv.com/ie"><img id="now_logo" src="{{url_for('static', filename='images/now_logo.png')}}" width="85%" height="auto"></a></div>
         
     </header>
 
-    <div class="container" id="home_container">
+    <div id="home_container">
         {% block body %}{% endblock %}
     </div>
     
     <footer class="container" id="footer">
         <div class="box">
-            <p>Footer content</p>
+            <p>Brought to you by Group 4</p>
         </div>
     </footer>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/dublinbikes.js') }}"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAATWob_anm9tXOgwSN35vcZIal8Q5oZto&callback=initMap" async></script>
 </body>
 </html>
