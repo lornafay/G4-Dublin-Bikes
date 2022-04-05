@@ -22,7 +22,7 @@ def index():
 
 
 # route when "Stations" seleceted from menu
-@app.route('/stations.html')
+@app.route('/stations')
 def stations():
     return render_template("stations.html")
 
