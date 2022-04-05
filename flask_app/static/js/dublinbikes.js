@@ -1,3 +1,69 @@
+// ***** MAPS JS *****
+var stations_obj;
+
+fetch("/stations").then(response => {
+    return response.json();
+    }).then(data => {
+    stations_obj = data.stations;
+
+});
+
+console.log(stations_obj);
+
+function initMap(){
+    // The location of dublin
+    const dublin = { lat: 53.3446983, lng: -6.2661571 };
+    // The map, centered at Dublin
+    const map = new google.maps.Map(document.getElementById("map"), {
+    zoom: 14,
+    center: dublin,
+    });
+    
+    var infoWindow = new google.maps.InfoWindow();
+ 
+    
+    
+    // loop through stations to add markers
+    // code adapted from lecture slides
+    stations_obj.forEach(station => {
+    var marker = new google.maps.Marker({
+        position: {
+        lat: station.latitude,
+        lng: station.longitude
+        },
+        map: map,
+        title: station.name,
+        });
+
+        // code to add click event and make sure only one window is open at a time found at 
+        // https://www.aspsnippets.com/Articles/Google-Maps-API-V3-Open-Show-only-one-InfoWindow-at-a-time-and-close-other-InfoWindow.aspx
+        (function (marker) {
+            google.maps.event.addListener(marker, "click", function (e) {
+                
+            var contentString = '<div id="content_window"><h2>' + station.number + '. ' + station.name + `</h2>
+                            <table id="station_info">
+                            <tr><td>Status: </td><td><span class="station_info_item">` + station.status + `</span></td></tr>
+                            <tr><td>Bikes available: </td><td><span class="station_info_item">` + station.bikes_available + `</span></td></tr>
+                            <tr><td>Stands available: </td><td><span class="station_info_item">` + station.stands_available + `</span></td></tr>
+                            </table></div>`;
+
+            // use content string defined before 
+            infoWindow.setContent(contentString);
+            infoWindow.open({
+                map: map, 
+                anchor: marker,
+                maxWidth: 200});
+            });
+        // call function
+        })(marker);
+    
+    });
+}
+
+// call initMap function
+//initMap();
+
+
 // ***** WEATHER JS *****
 
 // declare a few variables to give them global accessibility
@@ -114,63 +180,4 @@ $.getJSON("https://api.openweathermap.org/data/2.5/onecall?lat=53.350140&lon=-6.
 
 
 
-// ***** MAPS JS *****
-    
-fetch("/stations").then(response => {
-return response.json();
-}).then(data => {
-var stations = data.stations;
 
-console.log(stations);
-
-function initMap(stations){
-    // The location of dublin
-    const dublin = { lat: 53.3446983, lng: -6.2661571 };
-    // The map, centered at Dublin
-    const map = new google.maps.Map(document.getElementById("map"), {
-    zoom: 14,
-    center: dublin,
-    });
-    
-    var infoWindow = new google.maps.InfoWindow();
-
-    // loop through stations to add markers
-    // code adapted from lecture slides
-    stations.forEach(station => {
-    var marker = new google.maps.Marker({
-        position: {
-        lat: station.latitude,
-        lng: station.longitude
-        },
-        map: map,
-        title: station.name,
-        });
-
-        // code to add click event and make sure only one window is open at a time found at 
-        // https://www.aspsnippets.com/Articles/Google-Maps-API-V3-Open-Show-only-one-InfoWindow-at-a-time-and-close-other-InfoWindow.aspx
-        (function (marker) {
-            google.maps.event.addListener(marker, "click", function (e) {
-                
-            var contentString = '<div id="content_window"><h2>' + station.number + '. ' + station.name + `</h2>
-                            <table id="station_info">
-                            <tr><td>Status: </td><td><span class="station_info_item">` + station.status + `</span></td></tr>
-                            <tr><td>Bikes available: </td><td><span class="station_info_item">` + station.bikes_available + `</span></td></tr>
-                            <tr><td>Stands available: </td><td><span class="station_info_item">` + station.stands_available + `</span></td></tr>
-                            </table></div>`;
-
-            // use content string defined before 
-            infoWindow.setContent(contentString);
-            infoWindow.open({
-                map: map, 
-                anchor: marker,
-                maxWidth: 200});
-            });
-        // call function
-        })(marker);
-    
-    });
-}
-
-// call initMap function
-initMap(stations);
-});
