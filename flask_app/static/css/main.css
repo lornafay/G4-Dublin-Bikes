@@ -180,7 +180,7 @@ a {
   justify-content: space-around;
   padding: 10px 30px;
   background-color: #f4f7f6;
-  max-height: 250px;
+ 
 }
 
 .small_forecast_box {
@@ -190,6 +190,7 @@ a {
   padding: 10px 30px;
   font-size: 10;
   font-weight: 300;
+  overflow: auto;
 }
 
 #current_icon_box img {
