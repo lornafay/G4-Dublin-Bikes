@@ -7,8 +7,7 @@ body {
 }
 
 header,
-footer,
-div {
+footer{
   margin: 10px;
   background-color: #ffffff;
 }
@@ -20,6 +19,8 @@ div {
   justify-content: space-evenly;
   border-color: #d4d2cf;
   box-shadow: 0px 0px 4px 2px #d4d2cf;
+  margin: 10px;
+  background-color: #ffffff;
 }
 
 .menu {
@@ -89,11 +90,9 @@ a {
 /* Map page-specific styling */
 
 #map {
-  height: 800px;
+  height: 650px;
   width: 100%;
-  border: none;
-  margin: 0px;
-  padding: 0px;
+  margin: 10px;
 }
 
 #content_window h2,

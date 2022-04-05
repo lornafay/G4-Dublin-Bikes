@@ -1,30 +1,33 @@
 // ***** MAPS JS *****
+
 var stations_obj;
+var map;
 
-fetch("/stations").then(response => {
-    return response.json();
-    }).then(data => {
-    stations_obj = data.stations;
-
-});
-
-console.log(stations_obj);
 
 function initMap(){
     // The location of dublin
     const dublin = { lat: 53.3446983, lng: -6.2661571 };
     // The map, centered at Dublin
-    const map = new google.maps.Map(document.getElementById("map"), {
-    zoom: 14,
-    center: dublin,
+    map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 14,
+        center: dublin,
     });
     
-    var infoWindow = new google.maps.InfoWindow();
- 
-    
-    
+    // fetch station array
+    fetch("/station_fetch").then(response => {
+        return response.json();
+        }).then(data => {
+        stations_obj = data.stations;
+        create_markers();
+    });    
+}
+
+
+function create_markers(){
     // loop through stations to add markers
     // code adapted from lecture slides
+    console.log(stations_obj);
+    var infoWindow = new google.maps.InfoWindow();
     stations_obj.forEach(station => {
     var marker = new google.maps.Marker({
         position: {
@@ -56,12 +59,8 @@ function initMap(){
             });
         // call function
         })(marker);
-    
     });
 }
-
-// call initMap function
-//initMap();
 
 
 // ***** WEATHER JS *****

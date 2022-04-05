@@ -27,7 +27,7 @@ def stations():
     return render_template("stations.html")
 
 
-@app.route('/stations')
+@app.route('/station_fetch')
 def get_stations():
 
     # get current time minus 5 mins
