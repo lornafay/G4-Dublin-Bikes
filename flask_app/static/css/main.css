@@ -4,13 +4,18 @@ body {
   font-family: Helvetica;
   font-weight: 300;
   background-color: #e3e8e5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 header,
 footer{
   margin: 10px;
   background-color: #ffffff;
+  width: 100%;
 }
+
 
 .container {
   display: flex;
@@ -38,13 +43,13 @@ footer{
   letter-spacing: 2px;
 }
 
-#home_container {
+
+.home_container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
-  width: 100%;
-  justify-content: center;
+  width: 90%;
   background-color: transparent;
 }
 
@@ -64,6 +69,12 @@ li {
 
 a {
   text-decoration: none;
+}
+
+.intro {
+  letter-spacing: 1px;
+  color: #35615a;
+  margin: 20px 0;
 }
 
 /* code for animated navbar taken from Kevin Powell on YouTube https://www.youtube.com/watch?v=8QKOaTYvYUA&t=0s  */
@@ -112,22 +123,44 @@ a {
   float: right;
 }
 
-#station_info {
+.station_info {
   display: flex;
   background-color: #d6e7e6;
   padding: 10%;
   border-radius: 10px;
-  font-size: 15;
 }
+
+#planner_box{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+#selections{
+  display: flex;
+  flex-direction: row;
+}
+
+.field{
+  display: flex;
+  margin: 30px 50px;
+}
+
+.selection_item{
+  font-weight: 500;
+}
+
+
 
 /* weather-specific styling */
 
-.intro {
-  letter-spacing: 1px;
-  color: #35615a;
-}
-
-/* weather-specific styling */
 
 #weather_container {
   width: 80%;

@@ -44,7 +44,7 @@ function create_markers(){
             google.maps.event.addListener(marker, "click", function (e) {
                 
             var contentString = '<div id="content_window"><h2>' + station.number + '. ' + station.name + `</h2>
-                            <table id="station_info">
+                            <table class="station_info">
                             <tr><td>Status: </td><td><span class="station_info_item">` + station.status + `</span></td></tr>
                             <tr><td>Bikes available: </td><td><span class="station_info_item">` + station.bikes_available + `</span></td></tr>
                             <tr><td>Stands available: </td><td><span class="station_info_item">` + station.stands_available + `</span></td></tr>

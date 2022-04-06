@@ -28,9 +28,37 @@
 
 {% block body %}
 
-    <div class="box" id="map" style="border: none;">
+    <div id="map" style="border: none;">
         <p>Map</p>
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAATWob_anm9tXOgwSN35vcZIal8Q5oZto&callback=initMap" async></script>
+    </div>
+    <div class="container" id="planner_box">
+      <h1 class="intro">Journey Planner</h1>
+      <p class="intro">Find a recommended station for your needs!</p>
+      <form id="planner_form" action="#" method="post">
+        <div id="selections">
+          <div class="field" id="request">
+            <p><span class="selection_item">I want to:</span><br><br>
+              <input type="radio" id="take" value="take"><label for="take">take a bike</label><br>
+              <input type="radio" id="leave" value="leave"><label for="leave">leave a bike</label>
+            </p>
+          </div>
+          <div class="field" id="location">
+            <p><span class="selection_item">From:</span><br><br>
+              <input type="radio" id="current" value="current"><label for="current">current location</label><br>
+              <input type="radio" id="custom" value="custom"><label for="custom">custom location</label>
+            </p>
+          </div>
+          <div class="field" id="time">
+            <p><span class="selection_item">At:</span><br><br>
+              <input type="time" name="nm">
+            </p>
+          </div>
+        </div>
+      <div id="submit_btn">
+        <p><input type="submit" name="nm"></p>
+      </div>
+      </form>
     </div>
 
 
