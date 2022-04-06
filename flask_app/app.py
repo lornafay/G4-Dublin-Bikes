@@ -1,6 +1,8 @@
-from flask import Flask, render_template, request, jsonify, json
+from crypt import methods
+from flask import Flask, redirect, render_template, request, jsonify, json, url_for
 from flask_mysqldb import MySQL
 from datetime import datetime, timedelta
+from wtforms.validators import DataRequired
 import os
 
 app = Flask(__name__)
@@ -19,6 +21,19 @@ mysql = MySQL(app)
 @app.route('/')
 def index():
     return render_template("index.html")
+
+
+@app.route('/predict', methods=["POST"])
+def predict():
+
+    # capture form inputs
+    bike_action = request.form["take_leave"]
+    source_location = request.form["current_custom"]
+    action_time = request.form["time"]
+
+    # return back to index page
+    results = [bike_action, source_location, action_time]
+    return render_template('index.html', results=results)
 
 
 # route when "Stations" seleceted from menu
