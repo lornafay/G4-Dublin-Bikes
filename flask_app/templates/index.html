@@ -52,8 +52,9 @@
           </div>
           <div class="field" id="location">
             <p><span class="selection_item">From:</span><br><br>
-              <input type="radio" id="current" value="current" name="current_custom"><label for="current">current location</label><br>
-              <input type="radio" id="custom" value="custom" name="current_custom"><label for="custom">custom location</label>
+              <input type="radio" id="current" value="current" name="current_custom" onclick="getLocation();"><label for="current">current location</label><br>
+              <input type="radio" id="custom" value="custom" onclick="selectRadio();"><label for="custom">custom location</label>
+              <div id="chosen_loc"></div>
             </p>
           </div>
           <div class="field" id="time">

@@ -3,6 +3,7 @@ from flask import Flask, redirect, render_template, request, jsonify, json, url_
 from flask_mysqldb import MySQL
 from datetime import datetime, timedelta
 from wtforms.validators import DataRequired
+import time
 import os
 
 app = Flask(__name__)
@@ -25,14 +26,18 @@ def index():
 
 @app.route('/predict', methods=["POST"])
 def predict():
-
+    # handles form data and returns a prediction
     # capture form inputs
     bike_action = request.form["take_leave"]
     source_location = request.form["current_custom"]
-    action_time = request.form["time"]
+    if request.form["time"] == "":
+        action_time = time.strftime('%H:%M')
+    else:
+        action_time = request.form["time"]
 
     # return back to index page
-    results = [bike_action, source_location, action_time]
+    selections = [bike_action, source_location, action_time]
+    results = f"Recommended station to {bike_action} a bike: [station]"
     return render_template('index.html', results=results)
 
 
