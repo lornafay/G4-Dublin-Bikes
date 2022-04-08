@@ -2,6 +2,8 @@
 
 var stations_obj;
 var map;
+var userGeoLat;
+var userGeoLong;
 
 
 function initMap(){
@@ -12,13 +14,14 @@ function initMap(){
         zoom: 14,
         center: dublin,
     });
-    
+
     // fetch station array
     fetch("/station_fetch").then(response => {
         return response.json();
         }).then(data => {
         stations_obj = data.stations;
         create_markers();
+        console.log();
     });    
 }
 
@@ -61,6 +64,33 @@ function create_markers(){
         })(marker);
     });
 }
+
+
+// show text input for custom location if radio button checked
+selectRadio = () => {
+    var radio = document.getElementById("custom");
+    if(radio.checked == true){
+        var chosen_loc = document.getElementById("chosen_loc");
+        chosen_loc.innerHTML  = '<input type="text" id="custom_input" name="current_custom" placeholder="enter a street name"></input>';
+        chosen_loc.style.display = "block";
+    }
+}
+
+
+// retrieve user location, asks user permission for location services
+getLocation = () => {
+    if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition( async function(position) {
+            var lat = position.coords.latitude;
+            var long = position.coords.longitude;
+            var chosen_loc = document.getElementById("chosen_loc");
+            chosen_loc.innerHTML = [lat,long];
+            chosen_loc.style.display = "block";
+        })
+    } else {
+        alert("Location services not supported by this browser");
+        }
+} 
 
 
 // ***** WEATHER JS *****

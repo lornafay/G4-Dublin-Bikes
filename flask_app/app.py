@@ -2,9 +2,11 @@ from crypt import methods
 from flask import Flask, redirect, render_template, request, jsonify, json, url_for
 from flask_mysqldb import MySQL
 from datetime import datetime, timedelta
-from wtforms.validators import DataRequired
 import time
 import os
+from math import radians, cos, sin, asin, sqrt
+from numpy import source
+import googlemaps
 
 app = Flask(__name__)
 
@@ -24,31 +26,8 @@ def index():
     return render_template("index.html")
 
 
-@app.route('/predict', methods=["POST"])
-def predict():
-    # handles form data and returns a prediction
-    # capture form inputs
-    bike_action = request.form["take_leave"]
-    source_location = request.form["current_custom"]
-    if request.form["time"] == "":
-        action_time = time.strftime('%H:%M')
-    else:
-        action_time = request.form["time"]
-
-    # return back to index page
-    selections = [bike_action, source_location, action_time]
-    results = f"Recommended station to {bike_action} a bike: [station]"
-    return render_template('index.html', results=results)
-
-
-# route when "Stations" seleceted from menu
-@app.route('/stations')
-def stations():
-    return render_template("stations.html")
-
-
-@app.route('/station_fetch')
-def get_stations():
+def getStationObj():
+    '''to be used for markers and prediction routes'''
 
     # get current time minus 5 mins
     # IMPORTANT remove the hours argument once daylight savings registers with datetime
@@ -61,9 +40,87 @@ def get_stations():
     rows = cur.fetchall()
     mysql.connection.commit()
     # handle results
-    stations = jsonify(stations=rows)
+    stations_json = jsonify(stations=rows)
 
-    return stations
+    return rows, stations_json
+
+
+@app.route('/predict', methods=["POST"])
+def predict():
+    # handles form data and returns a prediction
+
+    rows, js = getStationObj()
+
+    # harversine formula taken from Stack Overflow user @Michael Dunn https://stackoverflow.com/questions/4913349/haversine-formula-in-python-bearing-and-distance-between-two-gps-points
+    def haversine(lon1, lat1, lon2, lat2):
+        """
+        Calculate the great circle distance in kilometers between two points 
+        on the earth (specified in decimal degrees)
+        """
+        # convert decimal degrees to radians
+        lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+
+        # haversine formula
+        dlon = lon2 - lon1
+        dlat = lat2 - lat1
+        a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+        c = 2 * asin(sqrt(a))
+        # Radius of earth in kilometers. Use 3956 for miles. Determines return value units.
+        r = 6371
+        return c * r
+
+    # capture form inputs
+    bike_action = request.form["take_leave"]
+    source_location = request.form["current_custom"]
+    if request.form["time"] == "":
+        action_time = time.strftime('%H:%M')
+    else:
+        action_time = request.form["time"]
+
+    gmaps = googlemaps.Client(key='AIzaSyAATWob_anm9tXOgwSN35vcZIal8Q5oZto')
+
+    # Geocoding an address
+    #geocode_result = gmaps.geocode(f'{source_location}, Dublin, Ireland')
+    user_lat = 53.336724
+    user_long = -6.249040
+
+    distance_dict = {}
+    for row in rows:
+        # apply haversine formula to each station
+        distance_from_user = haversine(
+            user_lat, user_long, row["latitude"], row["longitude"])
+        distance_dict[row["name"]] = distance_from_user
+
+    # sort the dictionary by distance from user
+    sorted_distances = sorted(distance_dict.values())  # Sort the values
+    sorted_distance_dict = {}
+
+    for i in sorted_distances:
+        for k in distance_dict.keys():
+            if distance_dict[k] == i:
+                sorted_distance_dict[k] = distance_dict[k]
+                break
+
+    # closest station to user
+    nearest_station = list(sorted_distance_dict)[0]
+
+    # return back to index page
+    selections = [bike_action, source_location, action_time]
+    results = f"Recommended station to {bike_action} a bike: {nearest_station}"
+
+    return render_template('index.html', results=results)
+
+
+# route when "Stations" seleceted from menu
+@app.route('/stations')
+def stations():
+    return render_template("stations.html")
+
+
+@app.route('/station_fetch')
+def get_stations():
+    py, js = getStationObj()
+    return js
 
 
 # route when "Weather" seleceted from menu

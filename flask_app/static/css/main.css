@@ -11,11 +11,9 @@ body {
 
 header,
 footer{
-  margin: 10px;
   background-color: #ffffff;
   width: 100%;
 }
-
 
 .container {
   display: flex;
@@ -135,6 +133,7 @@ a {
   flex-direction: column;
   align-items: center;
   width: 90%;
+  height: auto;
 }
 
 form {
@@ -151,6 +150,16 @@ form {
 .field{
   display: flex;
   margin: 30px 50px;
+  height: auto;
+}
+
+#location{
+  display: flex;
+  flex-direction: column;
+}
+
+#chosen_loc{
+  display: none;
 }
 
 .selection_item{
@@ -232,6 +241,7 @@ form {
 #current_icon_box {
   align-items: center;
   width: 40%;
+  overflow: hidden;
 }
 
 #show_weather {
