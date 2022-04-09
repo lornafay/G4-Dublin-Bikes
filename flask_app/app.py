@@ -72,6 +72,24 @@ def predict():
         r = 6371
         return c * r
 
+    def availability(station, action):
+        """Returns True if station availability is sufficient.
+
+        Sufficiency based on where bike/stand availability is
+        at least 30% of station capacity."""
+
+        # determine need of user
+        if action == "take":
+            need = "bikes_available"
+        else:
+            need = "stands_available"
+
+        # find availability
+        if (station[need] / station["bike_stands"]) * 100 > 29.0:
+            return True
+        else:
+            return False
+
     # capture form inputs
     bike_action = request.form["take_leave"]
     source_location = request.form["current_custom"]
@@ -79,6 +97,7 @@ def predict():
         action_time = time.strftime('%H:%M')
     else:
         action_time = request.form["time"]
+    dist_range = request.form["within"]
 
     # the value taken from the "current_custom" part will be split in format ["current"][lat][lng] if a current location was chosen
     split_location = source_location.split(",")
@@ -100,27 +119,45 @@ def predict():
     # now use haversine to find nearest station
     distance_dict = {}
     for row in rows:
-        # apply haversine formula to each station
-        distance_from_user = haversine(
-            user_lat, user_long, row["latitude"], row["longitude"])
-        distance_dict[row["name"]] = distance_from_user
+        # if station is open and bike/stand availability is sufficient
+        if (row["status"] == "OPEN") and (availability(row, bike_action)):
+            # apply haversine formula to each station
+            distance_from_user = haversine(
+                user_lat, user_long, row["latitude"], row["longitude"])
+            # add to distances dict if it is within chosen distance
+            if distance_from_user <= float(dist_range):
+                distance_dict[row["name"]] = distance_from_user
 
-    # sort the dictionary by distance from user
-    sorted_distances = sorted(distance_dict.values())  # Sort the values
-    sorted_distance_dict = {}
+    # if dictionary length is greater than 1
+    if len(distance_dict) > 1:
+        # sort the dictionary by distance from user
+        sorted_distances = sorted(distance_dict.values())  # Sort the values
+        sorted_distance_dict = {}
 
-    for i in sorted_distances:
-        for k in distance_dict.keys():
-            if distance_dict[k] == i:
-                sorted_distance_dict[k] = distance_dict[k]
-                break
+        for i in sorted_distances:
+            for k in distance_dict.keys():
+                if distance_dict[k] == i:
+                    sorted_distance_dict[k] = distance_dict[k]
+                    break
 
-    # closest station to user
-    nearest_station = list(sorted_distance_dict)[0]
+        # closest station to user
+        nearest_station = list(sorted_distance_dict)[0]
 
-    # return back to index page
-    selections = [bike_action, source_location, action_time]
-    results = f"Recommended station to {bike_action} a bike: {nearest_station}"
+        # return back to index page
+        results = f"Recommended station to {bike_action} a bike: {nearest_station}"
+
+    # else if dict had only one element
+    elif len(distance_dict) == 1:
+        results = f"Recommended station to {bike_action} a bike: {list(distance_dict.keys())[0]}"
+
+    # if no items in distance dict
+    else:
+        if bike_action == "take":
+            message = "bikes"
+        else:
+            message = "stands"
+
+        results = f"Sorry, no stations available with at least 30% availability of {message}."
 
     return render_template("index.html", results=results)
 
