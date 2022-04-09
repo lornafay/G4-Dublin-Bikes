@@ -5,7 +5,6 @@ var map;
 var userGeoLat;
 var userGeoLong;
 
-
 function initMap(){
     // The location of dublin
     const dublin = { lat: 53.3446983, lng: -6.2661571 };
@@ -200,7 +199,11 @@ function changeWeather() {
     }
 }
 
-$.getJSON("https://api.openweathermap.org/data/2.5/onecall?lat=53.350140&lon=-6.266155&units=metric&exclude=daily&appid=C5826d96448b6ef028c87b0cf5da80b7", function(data){
+
+// fetch station array
+fetch("/weather_fetch").then(response => {
+    return response.json();
+    }).then(data => {
 
     // set variables previously declared
     current_time = data.current.dt;
@@ -216,7 +219,6 @@ $.getJSON("https://api.openweathermap.org/data/2.5/onecall?lat=53.350140&lon=-6.
     if (minutes < 10){
         minutes = "0" + minutes
     }
-    
     currentDisplayed = true;
 
     // invoke content function                                    

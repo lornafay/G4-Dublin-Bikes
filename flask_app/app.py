@@ -1,5 +1,6 @@
 #!/home/ubuntu/miniconda3/envs/comp30830/bin/python
 from crypt import methods
+from nis import maps
 from unittest import result
 from flask import Flask, redirect, render_template, request, jsonify, json, url_for
 from flask_mysqldb import MySQL
@@ -9,6 +10,7 @@ import os
 from math import radians, cos, sin, asin, sqrt
 from numpy import source
 import googlemaps
+import requests
 
 app = Flask(__name__)
 
@@ -17,7 +19,8 @@ app.config['MYSQL_USER'] = os.environ.get('RDS_USER')
 app.config['MYSQL_PASSWORD'] = os.environ.get('RDS_PASSWD')
 app.config['MYSQL_DB'] = 'dublinbikes'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
-
+MAPS_API = os.environ.get("MAPS_API")
+WEATHER_API = os.environ.get("WEATHER_KEY")
 
 mysql = MySQL(app)
 
@@ -25,7 +28,8 @@ mysql = MySQL(app)
 # route for index page (Live Map)
 @app.route('/')
 def index():
-    return render_template("index.html")
+
+    return render_template("index.html", maps_api=MAPS_API, weather_api=WEATHER_API)
 
 
 def getStationObj():
@@ -109,7 +113,7 @@ def predict():
     # the splitting condition will not apply if a custom location was chosen so we just geocode the unprocessed input value
     else:
         gmaps = googlemaps.Client(
-            key="AIzaSyCCnRujBgwGOjniJqxfYgHBA8VFzTIYCH8")
+            key=MAPS_API)
 
         # Geocoding the address into lat and lng values
         geocode_result = gmaps.geocode(f"{source_location}, Dublin, Ireland")
@@ -159,7 +163,7 @@ def predict():
 
         results = f"Sorry, no stations available with at least 30% availability of {message}."
 
-    return render_template("index.html", results=results)
+    return render_template("index.html", results=results, maps_api=MAPS_API)
 
 
 # route when "Stations" seleceted from menu
@@ -168,6 +172,7 @@ def stations():
     return render_template("stations.html")
 
 
+# fetch station data
 @app.route('/station_fetch')
 def get_stations():
     py, js = getStationObj()
@@ -178,6 +183,17 @@ def get_stations():
 @app.route('/weather')
 def weather():
     return render_template("weather.html")
+
+
+# fetch weather data
+@app.route('/weather_fetch')
+def get_weather():
+    response = requests.get(
+        f"https://api.openweathermap.org/data/2.5/onecall?lat=53.350140&lon=-6.266155&units=metric&exclude=daily&appid={WEATHER_API}")
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return f"Error {response.status_code}. There was a problem with the fetch."
 
 
 if __name__ == "__main__":
