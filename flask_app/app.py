@@ -1,4 +1,6 @@
+#!/home/ubuntu/miniconda3/envs/comp30830/bin/python
 from crypt import methods
+from unittest import result
 from flask import Flask, redirect, render_template, request, jsonify, json, url_for
 from flask_mysqldb import MySQL
 from datetime import datetime, timedelta
@@ -51,10 +53,11 @@ def predict():
 
     rows, js = getStationObj()
 
-    # harversine formula taken from Stack Overflow user @Michael Dunn https://stackoverflow.com/questions/4913349/haversine-formula-in-python-bearing-and-distance-between-two-gps-points
+    # harversine formula taken from Stack Overflow user @Michael Dunn
+    # https://stackoverflow.com/questions/4913349/haversine-formula-in-python-bearing-and-distance-between-two-gps-points
     def haversine(lon1, lat1, lon2, lat2):
         """
-        Calculate the great circle distance in kilometers between two points 
+        Calculate the great circle distance in kilometers between two points
         on the earth (specified in decimal degrees)
         """
         # convert decimal degrees to radians
@@ -65,7 +68,7 @@ def predict():
         dlat = lat2 - lat1
         a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
         c = 2 * asin(sqrt(a))
-        # Radius of earth in kilometers. Use 3956 for miles. Determines return value units.
+        # Radius of earth in kilometers. Determines return value units.
         r = 6371
         return c * r
 
@@ -77,13 +80,24 @@ def predict():
     else:
         action_time = request.form["time"]
 
-    gmaps = googlemaps.Client(key='AIzaSyAATWob_anm9tXOgwSN35vcZIal8Q5oZto')
+    # the value taken from the "current_custom" part will be split in format ["current"][lat][lng] if a current location was chosen
+    split_location = source_location.split(",")
+    if split_location[0] == "current":
+        # sample current location = TCD Hamilton building (Comp Sci school)
+        user_lat = float(split_location[1])
+        user_long = float(split_location[2])
 
-    # Geocoding an address
-    #geocode_result = gmaps.geocode(f'{source_location}, Dublin, Ireland')
-    user_lat = 53.336724
-    user_long = -6.249040
+    # the splitting condition will not apply if a custom location was chosen so we just geocode the unprocessed input value
+    else:
+        gmaps = googlemaps.Client(
+            key="AIzaSyCCnRujBgwGOjniJqxfYgHBA8VFzTIYCH8")
 
+        # Geocoding the address into lat and lng values
+        geocode_result = gmaps.geocode(f"{source_location}, Dublin, Ireland")
+        user_lat = geocode_result[0]["geometry"]["location"]["lat"]
+        user_long = geocode_result[0]["geometry"]["location"]["lng"]
+
+    # now use haversine to find nearest station
     distance_dict = {}
     for row in rows:
         # apply haversine formula to each station
@@ -108,7 +122,7 @@ def predict():
     selections = [bike_action, source_location, action_time]
     results = f"Recommended station to {bike_action} a bike: {nearest_station}"
 
-    return render_template('index.html', results=results)
+    return render_template("index.html", results=results)
 
 
 # route when "Stations" seleceted from menu

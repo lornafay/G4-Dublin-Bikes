@@ -67,7 +67,7 @@ function create_markers(){
 
 
 // show text input for custom location if radio button checked
-selectRadio = () => {
+selectCustomRadio = () => {
     var radio = document.getElementById("custom");
     if(radio.checked == true){
         var chosen_loc = document.getElementById("chosen_loc");
@@ -77,21 +77,37 @@ selectRadio = () => {
 }
 
 
-// retrieve user location, asks user permission for location services
-getLocation = () => {
+// NOTE: the following function requires a HTTPS cert to allow users to provide their current location
+// as we do not have the required cert, the next function, getStaticLocation will be implemented which
+// simulates the user's location
+// I decided to include getLiveLocation so that the code would be ready to go if we got a HTTPS cert in future!
+getLiveLocation = () => {
     if(navigator.geolocation) {
         navigator.geolocation.getCurrentPosition( async function(position) {
             var lat = position.coords.latitude;
             var long = position.coords.longitude;
-            var chosen_loc = document.getElementById("chosen_loc");
-            chosen_loc.innerHTML = [lat,long];
-            chosen_loc.style.display = "block";
+
+            // set input value of radio button to be the lat and long
+            var radio = document.getElementById("current");
+            // custom keyword used for handling in flask app
+            radio.value = ["current",lat, long];
         })
     } else {
         alert("Location services not supported by this browser");
         }
 } 
 
+getStaticLocation = () => {
+    alert("Location services have been authorised!")
+    // lat and long of simulated area
+    var lat = 53.34352721769578;
+    var long = -6.250279542367871;
+    
+    // set input value of radio button to be the lat and long
+    var radio = document.getElementById("current");
+    // custom keyword used for handling in flask app
+    radio.value = ["current",lat, long];
+}
 
 // ***** WEATHER JS *****
 

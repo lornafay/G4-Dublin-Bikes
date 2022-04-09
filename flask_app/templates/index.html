@@ -32,7 +32,7 @@
 
     <div id="map" style="border: none;">
       <p>Map</p>
-      <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAATWob_anm9tXOgwSN35vcZIal8Q5oZto&callback=initMap" async></script>
+      <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCnRujBgwGOjniJqxfYgHBA8VFzTIYCH8&callback=initMap" async></script>
     </div>
 
     <!--Journey planner html-->
@@ -52,8 +52,8 @@
           </div>
           <div class="field" id="location">
             <p><span class="selection_item">From:</span><br><br>
-              <input type="radio" id="current" value="current" name="current_custom" onclick="getLocation();"><label for="current">current location</label><br>
-              <input type="radio" id="custom" value="custom" onclick="selectRadio();"><label for="custom">custom location</label>
+              <input type="radio" id="current" name="current_custom" onclick="getStaticLocation();"><label for="current">current location</label><br>
+              <input type="radio" id="custom" value="custom" onclick="selectCustomRadio();"><label for="custom">custom location</label>
               <div id="chosen_loc"></div>
             </p>
           </div>
