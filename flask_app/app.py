@@ -121,21 +121,42 @@ def predict():
         user_lat = geocode_result[0]["geometry"]["location"]["lat"]
         user_long = geocode_result[0]["geometry"]["location"]["lng"]
 
-    # now use haversine to find nearest station
-    distance_dict = {}
-    for row in rows:
-        # if station is open and bike/stand availability is sufficient
-        if (row["status"] == "OPEN") and (availability(row, bike_action)):
-            # apply haversine formula to each station
-            distance_from_user = haversine(
-                user_lat, user_long, row["latitude"], row["longitude"])
-            # if a distance range was not picked
-            if dist_range == "all":
-                distance_dict[row["name"]] = distance_from_user
-            else:
-                # add to distances dict if it is within chosen distance
-                if distance_from_user <= float(dist_range):
+    # declare a threshold for using a prediction instead of the current data -> 30 mins from now
+    # if user's indicated time is beyond this, we will predict the bike/stand availability
+
+    current_date = datetime.now()
+    # get hours and minutes from user's chosen time to formulate a datetime object then a timestamp
+    selected_hour, selected_min = action_time.split(":")
+    time_selected = f"{str(current_date.year)}-{str(current_date.month)}-{str(current_date.day)} {selected_hour}:{selected_min}:00"
+    selected_timestamp = datetime.timestamp(
+        datetime.strptime(time_selected, '%Y-%m-%d %H:%M:%S'))
+
+    # if a time in the past is chosen
+    if time.time() > selected_timestamp:
+        pass
+    # if a time within 30 mins is chosen
+    elif time.time() + 1800 > selected_timestamp:
+        within30 = True
+
+        # declare empty dictionary to store station distances from user
+        distance_dict = {}
+        for row in rows:
+            # if station is open and bike/stand availability is sufficient
+            if (row["status"] == "OPEN") and (availability(row, bike_action)):
+                # apply haversine formula to each station
+                distance_from_user = haversine(
+                    user_lat, user_long, row["latitude"], row["longitude"])
+                # if a distance range was not picked
+                if dist_range == "all":
                     distance_dict[row["name"]] = distance_from_user
+                else:
+                    # add to distances dict if it is within chosen distance
+                    if distance_from_user <= float(dist_range):
+                        distance_dict[row["name"]] = distance_from_user
+
+    # if a time beyond 30 mins is chosen
+    else:
+        within30 = False
 
     # if dictionary length is greater than 1
     if len(distance_dict) > 1:
@@ -168,7 +189,7 @@ def predict():
 
         results = f"Sorry, no stations available with at least 25% availability of {message}."
 
-    return render_template("index.html", results=results, maps_api=MAPS_API)
+    return render_template("index.html", results=timetest, maps_api=MAPS_API)
 
 
 # route when "Stations" seleceted from menu
