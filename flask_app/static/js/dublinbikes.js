@@ -70,7 +70,7 @@ selectCustomRadio = () => {
     var radio = document.getElementById("custom");
     if(radio.checked == true){
         var chosen_loc = document.getElementById("chosen_loc");
-        chosen_loc.innerHTML  = '<input type="text" id="custom_input" name="current_custom" placeholder="enter a street name"></input>';
+        chosen_loc.innerHTML  = '<input type="text" name="current_custom" id="custom_input" placeholder="enter a street/place"></input>';
         chosen_loc.style.display = "block";
     }
 }
@@ -78,11 +78,12 @@ selectCustomRadio = () => {
 
 // NOTE: the following function requires a HTTPS cert to allow users to provide their current location
 // as we do not have the required cert, the next function, getStaticLocation will be implemented which
-// simulates the user's location
+// simulates the user's location as the School of Computer Science in TCD 
+// (the TCD student has realised their mistake of attending TCD and needs a bike ASAP to get out of there)
 // I decided to include getLiveLocation so that the code would be ready to go if we got a HTTPS cert in future!
 getLiveLocation = () => {
     if(navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition( async function(position) {
+        var position = navigator.geolocation.getCurrentPosition;
             var lat = position.coords.latitude;
             var long = position.coords.longitude;
 
@@ -90,21 +91,21 @@ getLiveLocation = () => {
             var radio = document.getElementById("current");
             // custom keyword used for handling in flask app
             radio.value = ["current",lat, long];
-        })
-    } else {
+        } else {
         alert("Location services not supported by this browser");
         }
-} 
+    } 
 
 getStaticLocation = () => {
+    // simulate a location alert
     alert("Location services have been authorised!")
-    // lat and long of simulated area
+    // lat and long of TCD
     var lat = 53.34352721769578;
     var long = -6.250279542367871;
     
     // set input value of radio button to be the lat and long
     var radio = document.getElementById("current");
-    // custom keyword used for handling in flask app
+    // "current" keyword used for differentiating location choice by the flask predict function
     radio.value = ["current",lat, long];
 }
 

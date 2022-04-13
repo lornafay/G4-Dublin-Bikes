@@ -80,7 +80,7 @@ def predict():
         """Returns True if station availability is sufficient.
 
         Sufficiency based on where bike/stand availability is
-        at least 30% of station capacity."""
+        at least 25% of station capacity."""
 
         # determine need of user
         if action == "take":
@@ -88,8 +88,8 @@ def predict():
         else:
             need = "stands_available"
 
-        # find availability
-        if (station[need] / station["bike_stands"]) * 100 > 29.0:
+        # find availability -> we have chosen to only recommend a station that has at least 25% avaliability of bikes/stands
+        if (station[need] / station["bike_stands"]) * 100 >= 25.0:
             return True
         else:
             return False
@@ -97,6 +97,7 @@ def predict():
     # capture form inputs
     bike_action = request.form["take_leave"]
     source_location = request.form["current_custom"]
+    # if the time is left blank default to now
     if request.form["time"] == "":
         action_time = time.strftime('%H:%M')
     else:
@@ -106,7 +107,7 @@ def predict():
     # the value taken from the "current_custom" part will be split in format ["current"][lat][lng] if a current location was chosen
     split_location = source_location.split(",")
     if split_location[0] == "current":
-        # sample current location = TCD Hamilton building (Comp Sci school)
+        print(split_location)
         user_lat = float(split_location[1])
         user_long = float(split_location[2])
 
@@ -128,9 +129,13 @@ def predict():
             # apply haversine formula to each station
             distance_from_user = haversine(
                 user_lat, user_long, row["latitude"], row["longitude"])
-            # add to distances dict if it is within chosen distance
-            if distance_from_user <= float(dist_range):
+            # if a distance range was not picked
+            if dist_range == "all":
                 distance_dict[row["name"]] = distance_from_user
+            else:
+                # add to distances dict if it is within chosen distance
+                if distance_from_user <= float(dist_range):
+                    distance_dict[row["name"]] = distance_from_user
 
     # if dictionary length is greater than 1
     if len(distance_dict) > 1:
@@ -161,7 +166,7 @@ def predict():
         else:
             message = "stands"
 
-        results = f"Sorry, no stations available with at least 30% availability of {message}."
+        results = f"Sorry, no stations available with at least 25% availability of {message}."
 
     return render_template("index.html", results=results, maps_api=MAPS_API)
 

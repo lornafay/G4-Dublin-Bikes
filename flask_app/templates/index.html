@@ -4,25 +4,6 @@
 
     <title>Live Map</title>
    
-   
-    
-    <!--
-    <script>
-      var x = document.getElementById("demo");
-      function getLocation() {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(showPosition);
-        } else {
-          x.innerHTML = "Geolocation is not supported by this browser.";
-        }
-      }
- 
-     function showPosition(position) {
-       x.innerHTML = "Latitude: " + position.coords.latitude +
-       "<br>Longitude: " + position.coords.longitude;
-     }
-     </script>
-     -->
 
 {% endblock %}
 
@@ -48,7 +29,7 @@
             <!--Chose whether a bike or stand is needed-->
             <p><span class="selection_item">I want to:</span><br><br>
               <input type="radio" id="take" value="take" name="take_leave"><label for="take">take a bike</label><br>
-              <input type="radio" id="leave" value="leave" name="take_leave"><label for="leave">leave a bike</label>
+              <input type="radio" id="leave" value="leave" name="take_leave" required><label for="leave">leave a bike</label>
             </p>
           </div>
           <div class="field" id="location">
@@ -74,6 +55,7 @@
                 <option value="0.75">750m</option>
                 <option value="1">1km</option>
                 <option value="2">2km</option>
+                <option value="all">show all</option>
               </select>
             </p>
           </div>
