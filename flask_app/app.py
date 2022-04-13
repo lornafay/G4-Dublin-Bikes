@@ -1,6 +1,8 @@
 #!/home/ubuntu/miniconda3/envs/comp30830/bin/python
 from crypt import methods
+import math
 from nis import maps
+import pickle
 from unittest import result
 from flask import Flask, redirect, render_template, request, jsonify, json, url_for
 from flask_mysqldb import MySQL
@@ -11,6 +13,7 @@ from math import radians, cos, sin, asin, sqrt
 from numpy import source
 import googlemaps
 import requests
+import numpy as np
 
 app = Flask(__name__)
 
@@ -23,6 +26,15 @@ MAPS_API = os.environ.get("MAPS_API")
 WEATHER_API = os.environ.get("WEATHER_KEY")
 
 mysql = MySQL(app)
+
+
+def fetch_weather():    
+    response = requests.get(
+        f"https://api.openweathermap.org/data/2.5/onecall?lat=53.350140&lon=-6.266155&units=metric&exclude=daily&appid={WEATHER_API}")
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return f"Error {response.status_code}. There was a problem with the fetch."
 
 
 # route for index page (Live Map)
@@ -131,63 +143,112 @@ def predict():
     selected_timestamp = datetime.timestamp(
         datetime.strptime(time_selected, '%Y-%m-%d %H:%M:%S'))
 
+
     # if a time in the past is chosen
     if time.time() > selected_timestamp:
-        pass
-    # if a time within 30 mins is chosen
-    elif time.time() + 1800 > selected_timestamp:
-        within30 = True
-
+        results = "A time in the future must be chosen!"
+    else:
         # declare empty dictionary to store station distances from user
         distance_dict = {}
-        for row in rows:
-            # if station is open and bike/stand availability is sufficient
-            if (row["status"] == "OPEN") and (availability(row, bike_action)):
-                # apply haversine formula to each station
-                distance_from_user = haversine(
-                    user_lat, user_long, row["latitude"], row["longitude"])
-                # if a distance range was not picked
-                if dist_range == "all":
-                    distance_dict[row["name"]] = distance_from_user
-                else:
-                    # add to distances dict if it is within chosen distance
-                    if distance_from_user <= float(dist_range):
+
+
+        # if a time within 30 mins is chosen
+        if time.time() + 1800 > selected_timestamp:
+            within30 = True
+
+            for row in rows:
+                # if station is open and bike/stand availability is sufficient
+                if (row["status"] == "OPEN") and (availability(row, bike_action)):
+                    # apply haversine formula to each station
+                    distance_from_user = haversine(
+                        user_lat, user_long, row["latitude"], row["longitude"])
+                    # if a distance range was not picked
+                    if dist_range == "all":
                         distance_dict[row["name"]] = distance_from_user
+                    else:
+                        # add to distances dict if it is within chosen distance
+                        if distance_from_user <= float(dist_range):
+                            distance_dict[row["name"]] = distance_from_user
 
-    # if a time beyond 30 mins is chosen
-    else:
-        within30 = False
-
-    # if dictionary length is greater than 1
-    if len(distance_dict) > 1:
-        # sort the dictionary by distance from user
-        sorted_distances = sorted(distance_dict.values())  # Sort the values
-        sorted_distance_dict = {}
-
-        for i in sorted_distances:
-            for k in distance_dict.keys():
-                if distance_dict[k] == i:
-                    sorted_distance_dict[k] = distance_dict[k]
-                    break
-
-        # closest station to user
-        nearest_station = list(sorted_distance_dict)[0]
-
-        # return back to index page
-        results = f"Recommended station to {bike_action} a bike: {nearest_station}"
-
-    # else if dict had only one element
-    elif len(distance_dict) == 1:
-        results = f"Recommended station to {bike_action} a bike: {list(distance_dict.keys())[0]}"
-
-    # if no items in distance dict
-    else:
-        if bike_action == "take":
-            message = "bikes"
+        # if a time beyond 30 mins is chosen
         else:
-            message = "stands"
+            within30 = False
+            weather_result = fetch_weather()
+        #getting rain
+            difference_in_hours = (selected_timestamp - time.time()) / 3600
+            if difference_in_hours < 1:
+                rain = weather_result["minutely"][0]["precipitation"]
+            else:
+                hr = math.floor(difference_in_hours)
+                rain = weather_result["hourly"][hr]["pop"]
 
-        results = f"Sorry, no stations available with at least 25% availability of {message}."
+        #getting action
+            if bike_action == "take":
+                space_or_bike = "bike"
+            else:
+                space_or_bike = "space"
+
+        #getting day of week
+            day = current_date.weekday()
+
+
+
+
+
+
+            for row in rows:
+                number = row["number"]
+
+                filename = f"{space_or_bike}_predict_station_{number}.pkl"
+                model = pickle.load(open(filename, 'rb'))
+
+                prediction = model.predict(np.array(list(inputs)))
+                
+                if (prediction[0] / row["bike_stands"]) * 100 >= 25.0:
+                    # apply haversine formula to each station
+                    distance_from_user = haversine(
+                        user_lat, user_long, row["latitude"], row["longitude"])
+                    # if a distance range was not picked
+                    if dist_range == "all":
+                        distance_dict[row["name"]] = distance_from_user
+                    else:
+                        # add to distances dict if it is within chosen distance
+                        if distance_from_user <= float(dist_range):
+                            distance_dict[row["name"]] = distance_from_user
+
+
+                
+
+        # if dictionary length is greater than 1
+        if len(distance_dict) > 1:
+            # sort the dictionary by distance from user
+            sorted_distances = sorted(distance_dict.values())  # Sort the values
+            sorted_distance_dict = {}
+
+            for i in sorted_distances:
+                for k in distance_dict.keys():
+                    if distance_dict[k] == i:
+                        sorted_distance_dict[k] = distance_dict[k]
+                        break
+
+            # closest station to user
+            nearest_station = list(sorted_distance_dict)[0]
+
+            # return back to index page
+            results = f"Recommended station to {bike_action} a bike: {nearest_station}"
+
+        # else if dict had only one element
+        elif len(distance_dict) == 1:
+            results = f"Recommended station to {bike_action} a bike: {list(distance_dict.keys())[0]}"
+
+        # if no items in distance dict
+        else:
+            if bike_action == "take":
+                message = "bikes"
+            else:
+                message = "stands"
+
+            results = f"Sorry, no stations available with at least 25% availability of {message}."
 
     return render_template("index.html", results=timetest, maps_api=MAPS_API)
 
@@ -214,13 +275,7 @@ def weather():
 # fetch weather data
 @app.route('/weather_fetch')
 def get_weather():
-    response = requests.get(
-        f"https://api.openweathermap.org/data/2.5/onecall?lat=53.350140&lon=-6.266155&units=metric&exclude=daily&appid={WEATHER_API}")
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return f"Error {response.status_code}. There was a problem with the fetch."
-
+    return fetch_weather()
 
 if __name__ == "__main__":
     app.run(debug=True)
