@@ -4,6 +4,7 @@ import math
 from nis import maps
 import pickle
 from unittest import result
+from anyio import current_time
 from flask import Flask, redirect, render_template, request, jsonify, json, url_for
 from flask_mysqldb import MySQL
 from datetime import datetime, timedelta
@@ -14,6 +15,7 @@ from numpy import source
 import googlemaps
 import requests
 import numpy as np
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -28,7 +30,7 @@ WEATHER_API = os.environ.get("WEATHER_KEY")
 mysql = MySQL(app)
 
 
-def fetch_weather():    
+def fetch_weather():
     response = requests.get(
         f"https://api.openweathermap.org/data/2.5/onecall?lat=53.350140&lon=-6.266155&units=metric&exclude=daily&appid={WEATHER_API}")
     if response.status_code == 200:
@@ -65,7 +67,7 @@ def getStationObj():
 
 @app.route('/predict', methods=["POST"])
 def predict():
-    # handles form data and returns a prediction
+    """handles form data and returns a recommended station to the user"""
 
     rows, js = getStationObj()
 
@@ -88,7 +90,7 @@ def predict():
         r = 6371
         return c * r
 
-    def availability(station, action):
+    def current_availability(station, action):
         """Returns True if station availability is sufficient.
 
         Sufficiency based on where bike/stand availability is
@@ -102,6 +104,61 @@ def predict():
 
         # find availability -> we have chosen to only recommend a station that has at least 25% avaliability of bikes/stands
         if (station[need] / station["bike_stands"]) * 100 >= 25.0:
+            return True
+        else:
+            return False
+
+    def predicted_availability(row, bike_action):
+        """Returns True if station availability is predicted to be sufficient."""
+
+        # following blocks are to get the inputs to pass to the model
+        # getting rain
+        weather_result = fetch_weather()
+        difference_in_hours = (selected_timestamp - time.time()) / 3600
+        if difference_in_hours < 1:
+            rain = round(weather_result["minutely"][0]["precipitation"])
+        else:
+            hr = math.floor(difference_in_hours)
+            rain = round(weather_result["hourly"][hr]["pop"])
+
+        # getting action
+        if bike_action == "take":
+            space_or_bike = "bike"
+        else:
+            space_or_bike = "space"
+
+        # getting day of week
+        day = current_date.weekday()
+
+        # have to recode day according to a key as they got a bit jumbled when encoding timestamps (below)
+        if day == 0:
+            day = 4
+        elif day == 1:
+            day = 5
+        elif day == 2:
+            day = 6
+        elif day == 3:
+            day = 3
+        elif day == 4:
+            day = 1
+        elif day == 5:
+            day = 2
+        elif day == 6:
+            day = 0
+
+        # getting time -> pickle files have time encoded by removing the 10 trailing zeros so need to decode
+        input_time = selected_timestamp / 10000000000
+
+        # now use the model with the gathered inputs
+        number = int(row["number"])
+
+        filename = f"{space_or_bike}_predict_station_{number}.pkl"
+        #model = pickle.load(open(filename, 'rb'))
+        model = pd.read_pickle(filename)
+
+        prediction = model.predict(np.array([input_time, rain, day]))
+
+        if (prediction[0] / row["bike_stands"]) * 100 >= 25.0:
             return True
         else:
             return False
@@ -143,7 +200,6 @@ def predict():
     selected_timestamp = datetime.timestamp(
         datetime.strptime(time_selected, '%Y-%m-%d %H:%M:%S'))
 
-
     # if a time in the past is chosen
     if time.time() > selected_timestamp:
         results = "A time in the future must be chosen!"
@@ -151,14 +207,23 @@ def predict():
         # declare empty dictionary to store station distances from user
         distance_dict = {}
 
+        for row in rows:
+            if row["status"] == "OPEN":
+                # if a time within 30 mins is chosen
+                if time.time() + 1800 > selected_timestamp:
+                    within30 = True
+                    # use current function
+                    if current_availability(row, bike_action):
+                        sufficientAvailability = True
 
-        # if a time within 30 mins is chosen
-        if time.time() + 1800 > selected_timestamp:
-            within30 = True
+                # if a time beyond 30 mins is chosen
+                else:
+                    # use predictive function
+                    if predicted_availability(row, bike_action):
+                        sufficientAvailability = True
 
-            for row in rows:
-                # if station is open and bike/stand availability is sufficient
-                if (row["status"] == "OPEN") and (availability(row, bike_action)):
+                # only bother getting the distance between user and station if there is sufficient availability
+                if sufficientAvailability:
                     # apply haversine formula to each station
                     distance_from_user = haversine(
                         user_lat, user_long, row["latitude"], row["longitude"])
@@ -170,59 +235,13 @@ def predict():
                         if distance_from_user <= float(dist_range):
                             distance_dict[row["name"]] = distance_from_user
 
-        # if a time beyond 30 mins is chosen
-        else:
-            within30 = False
-            weather_result = fetch_weather()
-        #getting rain
-            difference_in_hours = (selected_timestamp - time.time()) / 3600
-            if difference_in_hours < 1:
-                rain = weather_result["minutely"][0]["precipitation"]
-            else:
-                hr = math.floor(difference_in_hours)
-                rain = weather_result["hourly"][hr]["pop"]
-
-        #getting action
-            if bike_action == "take":
-                space_or_bike = "bike"
-            else:
-                space_or_bike = "space"
-
-        #getting day of week
-            day = current_date.weekday()
-
-
-
-
-
-
-            for row in rows:
-                number = row["number"]
-
-                filename = f"{space_or_bike}_predict_station_{number}.pkl"
-                model = pickle.load(open(filename, 'rb'))
-
-                prediction = model.predict(np.array(list(inputs)))
-                
-                if (prediction[0] / row["bike_stands"]) * 100 >= 25.0:
-                    # apply haversine formula to each station
-                    distance_from_user = haversine(
-                        user_lat, user_long, row["latitude"], row["longitude"])
-                    # if a distance range was not picked
-                    if dist_range == "all":
-                        distance_dict[row["name"]] = distance_from_user
-                    else:
-                        # add to distances dict if it is within chosen distance
-                        if distance_from_user <= float(dist_range):
-                            distance_dict[row["name"]] = distance_from_user
-
-
-                
+        # now that a dictionary of eligible stations has been created, let's sort them by distance to user
 
         # if dictionary length is greater than 1
         if len(distance_dict) > 1:
-            # sort the dictionary by distance from user
-            sorted_distances = sorted(distance_dict.values())  # Sort the values
+            # sort the dictionary by distance
+            sorted_distances = sorted(
+                distance_dict.values())  # Sort the values
             sorted_distance_dict = {}
 
             for i in sorted_distances:
@@ -248,9 +267,9 @@ def predict():
             else:
                 message = "stands"
 
-            results = f"Sorry, no stations available with at least 25% availability of {message}."
+            results = f"Sorry, no stations available with at least 25% availability of {message} within your chosen radius."
 
-    return render_template("index.html", results=timetest, maps_api=MAPS_API)
+    return render_template("index.html", results=results, maps_api=MAPS_API)
 
 
 # route when "Stations" seleceted from menu
@@ -276,6 +295,7 @@ def weather():
 @app.route('/weather_fetch')
 def get_weather():
     return fetch_weather()
+
 
 if __name__ == "__main__":
     app.run(debug=True)
