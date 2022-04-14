@@ -17,6 +17,12 @@ import googlemaps
 import requests
 import numpy as np
 import pandas as pd
+import traceback
+import logging
+# log.setLevel(logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
+
+#log = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
@@ -151,19 +157,28 @@ def predict():
         elif day == 6:
             day = 0
 
-        # getting time -> pickle files have time encoded by removing the 10 trailing zeros so need to decode
-        input_time = selected_timestamp / 10000000000
+        # getting time
+        input_time = selected_timestamp
 
         # now use the model with the gathered inputs
         number = int(row["number"])
-        try:
-            filename = f"{space_or_bike}_predict_station_{number}.pkl"
-            #model = pickle.load(open(filename, 'rb'))
-            model = pd.read_pickle(filename)
 
-            prediction = model.predict(np.array([input_time, rain, day]))
-        except:
-            return "Could not retrieve prediction. Try again later."
+        filename = f"{space_or_bike}_predict_station_{number}.pkl"
+        app.logger.debug(f"filename : {filename} {os.getcwd()}")
+        #model = pickle.load(open(filename, 'rb'))
+        #model = pd.read_pickle(filename)
+
+        with open(filename, 'rb') as handle:
+            model = pickle.load(handle)
+
+        app.logger.debug(
+            f"filename : {filename} {os.getcwd()} {traceback.format_exc()}")
+
+        inputs = np.array([input_time, number, rain, day]).reshape(1, -1)
+
+        prediction = model.predict(inputs)
+
+        # return "Could not retrieve prediction. Try again later."
 
         if (prediction[0] / row["bike_stands"]) * 100 >= 25.0:
             return True
@@ -310,4 +325,5 @@ def get_weather():
 
 
 if __name__ == "__main__":
+    # app.logger.debug("hello")
     app.run(debug=True)

@@ -113,9 +113,8 @@ showLoader = () =>{
     // check inputs have been provided
     request = document.getElementsByName("take_leave");
     loc = document.getElementsByName("current_custom");
-    check = document.getElementsById("custom");
     
-    if (request.value.length != "" && (loc.value.length != "" || check.value != "")){
+    if (request.value != "" && (loc.value != "")){
         // show loading spinner while prediction loads
         document.getElementById("loader").style.display = "block";
         }
