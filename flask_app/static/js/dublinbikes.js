@@ -109,6 +109,17 @@ getStaticLocation = () => {
     radio.value = ["current",lat, long];
 }
 
+showLoader = () =>{
+    // check inputs have been provided
+    request = document.getElementsByName("take_leave");
+    loc = document.getElementsByName("current_custom");
+    
+    if (request.value.length != "" && loc.value.length != ""){
+        // show loading spinner while prediction loads
+        document.getElementById("loader").style.display = "block";
+        }
+    }
+
 // ***** WEATHER JS *****
 
 // declare a few variables to give them global accessibility
