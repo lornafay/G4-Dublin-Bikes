@@ -114,13 +114,17 @@ def predict():
 
         # following blocks are to get the inputs to pass to the model
         # getting rain
-        weather_result = fetch_weather()
-        difference_in_hours = (selected_timestamp - time.time()) / 3600
-        if difference_in_hours < 1:
-            rain = round(weather_result["minutely"][0]["precipitation"])
-        else:
-            hr = math.floor(difference_in_hours)
-            rain = round(weather_result["hourly"][hr]["pop"])
+        try:
+            weather_result = fetch_weather()
+            difference_in_hours = (selected_timestamp - time.time()) / 3600
+            if difference_in_hours < 1:
+                rain = round(weather_result["minutely"][0]["precipitation"])
+            else:
+                hr = math.floor(difference_in_hours)
+                rain = round(weather_result["hourly"][hr]["pop"])
+        except:
+            # if the weather API fetch doesn't work, we'll default to assuming it's not raining
+            rain = 0
 
         # getting action
         if bike_action == "take":
