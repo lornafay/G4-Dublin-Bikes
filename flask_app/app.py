@@ -1,4 +1,5 @@
 #!/home/ubuntu/miniconda3/envs/comp30830/bin/python
+from cgi import test
 from crypt import methods
 import math
 from nis import maps
@@ -151,12 +152,14 @@ def predict():
 
         # now use the model with the gathered inputs
         number = int(row["number"])
+        try:
+            filename = f"{space_or_bike}_predict_station_{number}.pkl"
+            #model = pickle.load(open(filename, 'rb'))
+            model = pd.read_pickle(filename)
 
-        filename = f"{space_or_bike}_predict_station_{number}.pkl"
-        #model = pickle.load(open(filename, 'rb'))
-        model = pd.read_pickle(filename)
-
-        prediction = model.predict(np.array([input_time, rain, day]))
+            prediction = model.predict(np.array([input_time, rain, day]))
+        except:
+            return "Could not retrieve prediction. Try again later."
 
         if (prediction[0] / row["bike_stands"]) * 100 >= 25.0:
             return True
@@ -200,8 +203,8 @@ def predict():
     selected_timestamp = datetime.timestamp(
         datetime.strptime(time_selected, '%Y-%m-%d %H:%M:%S'))
 
-    # if a time in the past is chosen
-    if time.time() > selected_timestamp:
+    # if a time in the past is chosen (give 2 minute grace period - asynchronous issue otherwise if page takes time to load)
+    if time.time() > selected_timestamp + 120:
         results = "A time in the future must be chosen!"
     else:
         # declare empty dictionary to store station distances from user
@@ -215,25 +218,30 @@ def predict():
                     # use current function
                     if current_availability(row, bike_action):
                         sufficientAvailability = True
-
+                    else:
+                        sufficientAvailability = False
                 # if a time beyond 30 mins is chosen
                 else:
                     # use predictive function
                     if predicted_availability(row, bike_action):
                         sufficientAvailability = True
-
-                # only bother getting the distance between user and station if there is sufficient availability
-                if sufficientAvailability:
-                    # apply haversine formula to each station
-                    distance_from_user = haversine(
-                        user_lat, user_long, row["latitude"], row["longitude"])
-                    # if a distance range was not picked
-                    if dist_range == "all":
-                        distance_dict[row["name"]] = distance_from_user
                     else:
-                        # add to distances dict if it is within chosen distance
-                        if distance_from_user <= float(dist_range):
-                            distance_dict[row["name"]] = distance_from_user
+                        sufficientAvailability = False
+            else:
+                continue
+
+            # only bother getting the distance between user and station if there is sufficient availability
+            if sufficientAvailability:
+                # apply haversine formula to each station
+                distance_from_user = haversine(
+                    user_lat, user_long, row["latitude"], row["longitude"])
+                # if a distance range was not picked
+                if dist_range == "all":
+                    distance_dict[row["name"]] = distance_from_user
+                else:
+                    # add to distances dict if it is within chosen distance
+                    if distance_from_user <= float(dist_range):
+                        distance_dict[row["name"]] = distance_from_user
 
         # now that a dictionary of eligible stations has been created, let's sort them by distance to user
 
