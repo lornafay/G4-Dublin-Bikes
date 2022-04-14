@@ -9,13 +9,6 @@
 
 {% block body %}
 
-    <!--Map with markers-->
-
-    <div id="map" style="border: none;">
-      <p>Map</p>
-      <script src="https://maps.googleapis.com/maps/api/js?key={{ maps_api }}&callback=initMap" async></script>
-    </div>
-
     <!--Journey planner html-->
     <div class="container" id="planner_box">
       <h1 class="intro">Journey Planner</h1>
@@ -61,12 +54,20 @@
           </div>
         </div>
         <div id="submit_btn">
-          <p><input type="submit" name="btn"></p>
+          <p><input id="btn" type="submit" name="btn" onclick="showLoader();"></p>
         </div>
       </form>
+      <div id="loader"></div>
       <div id="prediction">
         {{ results }}
       </div>
+    </div>
+
+    <!--Map with markers-->
+
+    <div id="map" style="border: none;">
+      <p>Map</p>
+      <script src="https://maps.googleapis.com/maps/api/js?key={{ maps_api }}&callback=initMap" async></script>
     </div>
 
     
