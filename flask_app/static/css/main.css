@@ -3,14 +3,17 @@
 body {
   font-family: Helvetica;
   font-weight: 300;
+  background-color: #a3b4b384;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #2c6663;
 }
 
 header,
-footer,
-div {
-  border: solid 1px;
-  border-color: #000000;
-  margin: 10px;
+footer{
+  background-color: #ffffff;
+  width: 100%;
 }
 
 .container {
@@ -18,6 +21,35 @@ div {
   flex-direction: row;
   align-items: center;
   justify-content: space-evenly;
+  border-color: #d4d2cf;
+  box-shadow: 0px 0px 4px 2px #d4d2cf;
+  margin: 10px;
+  background-color: #ffffff;
+}
+
+.menu {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.menu_item a {
+  color: #2c6663;
+  text-decoration: none;
+  font-size: 25px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+
+.home_container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 90%;
+  background-color: transparent;
 }
 
 .box {
@@ -25,6 +57,8 @@ div {
   flex-wrap: wrap;
   padding: 20px;
   display: inline-block;
+  height: auto;
+  width: auto;
 }
 
 li {
@@ -36,6 +70,27 @@ a {
   text-decoration: none;
 }
 
+.intro {
+  letter-spacing: 1px;
+  margin: 20px 0;
+}
+#disclaimer{
+  font-size: 10pt;
+}
+
+/* code for animated navbar taken from Kevin Powell on YouTube https://www.youtube.com/watch?v=8QKOaTYvYUA&t=0s  */
+.menu a::before {
+  content: "";
+  display: block;
+  height: 2px;
+  width: 0%;
+  background-color: #35615a;
+  transition: all ease-in-out 200ms;
+}
+.menu a:hover::before {
+  width: 100%;
+}
+
 #page_box {
   width: 300%;
 }
@@ -44,12 +99,192 @@ a {
   float: right;
 }
 
+/* Map page-specific styling */
+
+#map {
+  height: 650px;
+  width: 100%;
+  margin: 10px;
+}
+
+#content_window h2,
+.station_info_item {
+  color: #2c6663;
+}
+
+#content_window {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.station_info_item {
+  font-weight: 600;
+  margin-left: 5%;
+  float: right;
+}
+
+.station_info {
+  display: flex;
+  background-color: #d6e7e6;
+  padding: 10%;
+  border-radius: 10px;
+}
+
+#planner_box{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  height: auto;
+  padding-bottom: 30px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+#selections{
+  flex-wrap: wrap;
+  display: flex;
+  flex-direction: row;
+}
+
+.field{
+  display: flex;
+  margin: 0px 50px;
+  height: auto;
+}
+
+#location{
+  display: flex;
+  flex-direction: column;
+}
+
+#chosen_loc{
+  display: none;
+}
+
+.selection_item{
+  font-weight: 500;
+}
+
+#btn{
+  background-color: #2c6663;
+  color: #ffffff;
+  padding: 10px;
+}
+
+#prediction{
+  font-family: helvetica;
+  font-size: 25px;
+  margin-top: 20px;
+}
+
+/* code for loader taken from W3Schools*/
+#loader {
+  border: 16px solid #f3f3f3;
+  border-top: 16px solid #35615a;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 2s linear infinite;
+  display: none;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+
 /* weather-specific styling */
+
 
 #weather_container {
   width: 80%;
+  align-items: center;
+  margin: 20px 0px 20px 0px;
+  flex-direction: column;
+  height: 500px;
+}
+
+.forecast_type {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+}
+
+.weather_button {
+  border-color: #d4d2cf;
+  box-shadow: 0px 0px 2px 2px #d4d2cf;
+  font-size: 15px;
+  letter-spacing: 2px;
+  max-width: 200px;
+  padding: 10px 10px;
+  margin: 0px 5px 30px 5px;
 }
 
 .weather_box {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.hr_font {
+  font-size: 25px;
+  font-weight: 500;
+  color: rgb(60, 111, 117);
+  margin: 0;
+}
+
+#weather_container img {
+  width: auto;
+  height: 150%;
+}
+
+.hours_forecast {
+  display: flex;
+  flex-direction: row;
+  justify-items: baseline;
+  justify-content: space-around;
+  padding: 10px 30px;
+  background-color: #f4f7f6;
+}
+
+#wrap_forecast{
+  flex-wrap: wrap;
+}
+
+.small_forecast_box {
+  background-image: linear-gradient(to bottom left, #94b0b0, #cbd4d4);
+  display: flex;
+  flex-direction: column;
+  padding: 10px 30px;
+  font-size: 10;
+  font-weight: 300;
+  overflow: auto;
+}
+
+#current_icon_box img {
+  padding: 20%;
+}
+
+#current_icon_box {
+  align-items: center;
   width: 40%;
+  overflow: hidden;
+}
+
+#show_weather {
+  max-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 100px;
 }

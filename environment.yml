@@ -1,0 +1,12 @@
+name: comp30830
+channels:
+  - defaults
+dependencies:
+  - python=3.8
+  - numpy
+  - jupyterlab
+  - pandas
+  - mysql-connector-python
+  - scikit-learn
+prefix: /Users/Lorna/opt/anaconda3/envs/comp30830
+

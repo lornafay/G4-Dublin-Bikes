@@ -3,13 +3,73 @@
 {% block head %}
 
     <title>Live Map</title>
+   
 
 {% endblock %}
 
 {% block body %}
 
-    <div class="box" id="map">
-        <p>Map</p>
+    <!--Journey planner html-->
+    <div class="container" id="planner_box">
+      <h1 class="intro">Journey Planner</h1>
+      <p class="intro">Find a recommended station for your needs!</p>
+      <p id="disclaimer">Your request may be recorded for analytical purposes</p>
+
+      <!-- Form fields
+           prediction function is triggered when the POST request is made-->
+      <form id="planner_form" action="/predict" method="post">
+        <div id="selections">
+          <div class="field" id="request">
+            <!--Chose whether a bike or stand is needed-->
+            <p><span class="selection_item">I want to:</span><br><br>
+              <input type="radio" id="take" value="take" name="take_leave"><label for="take">take a bike</label><br>
+              <input type="radio" id="leave" value="leave" name="take_leave" required><label for="leave">leave a bike</label>
+            </p>
+          </div>
+          <div class="field" id="location">
+            <!--User location provided-->
+            <p><span class="selection_item">From:</span><br><br>
+              <input type="radio" id="current" name="current_custom" onclick="getStaticLocation();"><label for="current">current location</label><br>
+              <input type="radio" id="custom" value="custom" onclick="selectCustomRadio();"><label for="custom">custom location</label>
+              <div id="chosen_loc"></div>
+            </p>
+          </div>
+          <!--Time at which a station is needed (journey planner available for rest of current day)-->
+          <div class="field" id="time">
+            <p><span class="selection_item">At:</span><br><br>
+              <input type="time" name="time">
+            </p>
+          </div>
+          <!--Distance range provided-->
+          <div class="field" id="range">
+            <p><span class="selection_item">Show stations within:</span><br><br>
+              <select id="within" name="within">
+                <option value="0.25">250m</option>
+                <option value="0.5">500m</option>
+                <option value="0.75">750m</option>
+                <option value="1">1km</option>
+                <option value="2">2km</option>
+                <option value="all">show all</option>
+              </select>
+            </p>
+          </div>
+        </div>
+        <div id="submit_btn">
+          <p><input id="btn" type="submit" name="btn" onclick="showLoader();"></p>
+        </div>
+      </form>
+      <div id="loader"></div>
+      <div id="prediction">
+        {{ results }}
+      </div>
     </div>
 
+    <!--Map with markers-->
+
+    <div id="map" style="border: none;">
+      <p>Map</p>
+      <script src="https://maps.googleapis.com/maps/api/js?key={{ maps_api }}&callback=initMap" async></script>
+    </div>
+
+    
 {% endblock %}
