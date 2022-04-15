@@ -1,22 +1,15 @@
 #!/home/ubuntu/miniconda3/envs/comp30830/bin/python
-from cgi import test
-from crypt import methods
 import math
-from nis import maps
 import pickle
-from unittest import result
-from anyio import current_time
-from flask import Flask, redirect, render_template, request, jsonify, json, url_for
+from flask import Flask, render_template, request, jsonify
 from flask_mysqldb import MySQL
 from datetime import datetime, timedelta
 import time
 import os
 from math import radians, cos, sin, asin, sqrt
-from numpy import source
 import googlemaps
 import requests
 import numpy as np
-import pandas as pd
 import traceback
 import logging
 # log.setLevel(logging.DEBUG)
