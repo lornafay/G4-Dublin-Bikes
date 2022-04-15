@@ -14,7 +14,7 @@ import numpy as np
 import traceback
 import logging
 # log.setLevel(logging.DEBUG)
-logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)
 
 #log = logging.getLogger(__name__)
 
@@ -345,4 +345,4 @@ def get_weather():
 
 if __name__ == "__main__":
     # app.logger.debug("hello")
-    app.run(debug=True)
+    app.run(port=5000, host='0.0.0.0')
