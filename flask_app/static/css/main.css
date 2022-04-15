@@ -74,6 +74,9 @@ a {
   letter-spacing: 1px;
   margin: 20px 0;
 }
+#disclaimer{
+  font-size: 10pt;
+}
 
 /* code for animated navbar taken from Kevin Powell on YouTube https://www.youtube.com/watch?v=8QKOaTYvYUA&t=0s  */
 .menu a::before {

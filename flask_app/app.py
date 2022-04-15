@@ -185,6 +185,17 @@ def predict():
         else:
             return False
 
+    def recordRequest(action, lat, lng, time, distance, predicted):
+        '''records the nature of the request in our database'''
+
+        # create query
+        query = f"INSERT INTO requests (`action`, `lat`, `lng`, `time`, `distance (km)`, `predicted`) VALUES (%s, %s, %s, %s, %s, %s);"
+        items = [action, lat, lng, time, distance, predicted]
+        # execute
+        cur = mysql.connection.cursor()
+        cur.execute(query, items)
+        mysql.connection.commit()
+
     # capture form inputs
     bike_action = request.form["take_leave"]
     source_location = request.form["current_custom"]
@@ -233,7 +244,7 @@ def predict():
             if row["status"] == "OPEN":
                 # if a time within 30 mins is chosen
                 if time.time() + 1800 > selected_timestamp:
-                    within30 = True
+                    predicted = 0
                     # use current function
                     if current_availability(row, bike_action):
                         sufficientAvailability = True
@@ -241,6 +252,7 @@ def predict():
                         sufficientAvailability = False
                 # if a time beyond 30 mins is chosen
                 else:
+                    predicted = 1
                     # use predictive function
                     if predicted_availability(row, bike_action):
                         sufficientAvailability = True
@@ -295,6 +307,13 @@ def predict():
                 message = "stands"
 
             results = f"Sorry, no stations available with at least 25% availability of {message} within your chosen radius."
+
+        # record the user's choices in our database
+        try:
+            recordRequest(bike_action, user_lat, user_long,
+                          selected_timestamp, dist_range, predicted)
+        except:
+            pass
 
     return render_template("index.html", results=results, maps_api=MAPS_API)
 
