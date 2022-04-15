@@ -1,6 +1,7 @@
 #!/home/ubuntu/miniconda3/envs/comp30830/bin/python
 import math
 import pickle
+from unittest import result
 from flask import Flask, render_template, request, jsonify
 from flask_mysqldb import MySQL
 from datetime import datetime, timedelta
@@ -108,22 +109,10 @@ def predict():
         else:
             return False
 
-    def predicted_availability(row, bike_action):
+    def predicted_availability(row, bike_action, rain):
         """Returns True if station availability is predicted to be sufficient."""
 
         # following blocks are to get the inputs to pass to the model
-        # getting rain
-        try:
-            weather_result = fetch_weather()
-            difference_in_hours = (selected_timestamp - time.time()) / 3600
-            if difference_in_hours < 1:
-                rain = round(weather_result["minutely"][0]["precipitation"])
-            else:
-                hr = math.floor(difference_in_hours)
-                rain = round(weather_result["hourly"][hr]["pop"])
-        except:
-            # if the weather API fetch doesn't work, we'll default to assuming it's not raining
-            rain = 0
 
         # getting action
         if bike_action == "take":
@@ -226,28 +215,52 @@ def predict():
     selected_timestamp = datetime.timestamp(
         datetime.strptime(time_selected, '%Y-%m-%d %H:%M:%S'))
 
-    # if a time in the past is chosen (give 2 minute grace period - asynchronous issue otherwise if page takes time to load)
+    # if a time in the past is chosen (give 2 minute grace period - asynchronous issue occurs otherwise if the page takes time to load)
     if time.time() > selected_timestamp + 120:
         results = "A time in the future must be chosen!"
     else:
+
         # declare empty dictionary to store station distances from user
         distance_dict = {}
 
+        # if a time within 30 mins is chosen
+        if time.time() + 1800 > selected_timestamp:
+            predicted = 0
+
+        else:
+            predicted = 1
+            # getting rain
+            try:
+                weather_result = fetch_weather()
+                # rain forecasts are hourly in our fetch so we must do the following line to be sure to access the correct item in the response
+                difference_in_hours = (selected_timestamp - time.time()) / 3600
+                if difference_in_hours < 1:
+                    rain = round(
+                        weather_result["minutely"][0]["precipitation"])
+                else:
+                    hr = math.floor(difference_in_hours)
+                    rain = round(weather_result["hourly"][hr]["pop"])
+
+            except:
+                # if the weather API fetch doesn't work, we'll default to assuming it's not raining
+                rain = 0
+
+        # for each station
         for row in rows:
+            # if the station is open
             if row["status"] == "OPEN":
-                # if a time within 30 mins is chosen
-                if time.time() + 1800 > selected_timestamp:
-                    predicted = 0
+                # if we don't need a prediction
+                if predicted == 0:
                     # use current function
                     if current_availability(row, bike_action):
                         sufficientAvailability = True
                     else:
                         sufficientAvailability = False
-                # if a time beyond 30 mins is chosen
+
+                # if a time beyond 30 mins is chosen and we need a prediction
                 else:
-                    predicted = 1
                     # use predictive function
-                    if predicted_availability(row, bike_action):
+                    if predicted_availability(row, bike_action, rain):
                         sufficientAvailability = True
                     else:
                         sufficientAvailability = False
