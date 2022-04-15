@@ -152,7 +152,7 @@ function displayWeatherDublin(data){
 
     // html block for forecasted weather
     forecastBlock = `<div class="forecast_type"><button class="weather_button" id="current_button" type="button" onclick="changeWeather();">Currently in Dublin</button><button class="weather_button" id="forecast_button" style="background-color:#aabdbd">Forecast</button></div>
-                    <div class="hours_forecast">
+                    <div class="hours_forecast" id="wrap_forecast">
                     <div class= "small_forecast_box">
                         <p class="hr_font">2hr</p>
                             <p id="2hr">

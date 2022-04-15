@@ -230,6 +230,7 @@ form {
   flex-direction: column;
   height: auto;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .hr_font {
@@ -251,7 +252,10 @@ form {
   justify-content: space-around;
   padding: 10px 30px;
   background-color: #f4f7f6;
- 
+}
+
+#wrap_forecast{
+  flex-wrap: wrap;
 }
 
 .small_forecast_box {

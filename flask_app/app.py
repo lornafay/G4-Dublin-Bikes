@@ -141,7 +141,7 @@ def predict():
         # getting day of week
         day = current_date.weekday()
 
-        # have to recode day according to a key as they got a bit jumbled when encoding timestamps (below)
+        # have to recode day according to a key as they got a bit jumbled when encoding timestamps during model development
         if day == 0:
             day = 4
         elif day == 1:
@@ -162,23 +162,23 @@ def predict():
 
         # now use the model with the gathered inputs
         number = int(row["number"])
+        try:
+            filename = f"{space_or_bike}_predict_station_{number}.pkl"
+            app.logger.debug(f"filename : {filename} {os.getcwd()}")
+            #model = pickle.load(open(filename, 'rb'))
+            #model = pd.read_pickle(filename)
 
-        filename = f"{space_or_bike}_predict_station_{number}.pkl"
-        app.logger.debug(f"filename : {filename} {os.getcwd()}")
-        #model = pickle.load(open(filename, 'rb'))
-        #model = pd.read_pickle(filename)
+            with open(filename, 'rb') as handle:
+                model = pickle.load(handle)
 
-        with open(filename, 'rb') as handle:
-            model = pickle.load(handle)
+            app.logger.debug(
+                f"filename : {filename} {os.getcwd()} {traceback.format_exc()}")
 
-        app.logger.debug(
-            f"filename : {filename} {os.getcwd()} {traceback.format_exc()}")
+            inputs = np.array([input_time, number, rain, day]).reshape(1, -1)
 
-        inputs = np.array([input_time, number, rain, day]).reshape(1, -1)
-
-        prediction = model.predict(inputs)
-
-        # return "Could not retrieve prediction. Try again later."
+            prediction = model.predict(inputs)
+        except:
+            return "Error: prediction failed."
 
         if (prediction[0] / row["bike_stands"]) * 100 >= 25.0:
             return True
@@ -297,12 +297,6 @@ def predict():
             results = f"Sorry, no stations available with at least 25% availability of {message} within your chosen radius."
 
     return render_template("index.html", results=results, maps_api=MAPS_API)
-
-
-# route when "Stations" seleceted from menu
-@app.route('/stations')
-def stations():
-    return render_template("stations.html")
 
 
 # fetch station data
