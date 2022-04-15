@@ -52,7 +52,7 @@ def getStationObj():
 
     # get current time minus 5 mins
     # IMPORTANT remove the hours argument once daylight savings registers with datetime
-    timerange = datetime.now() - timedelta(hours=1, minutes=7)
+    timerange = datetime.now() - timedelta(hours=0, minutes=7)
     query = f"SELECT * FROM dublinbikes.dynamic d JOIN dublinbikes.static s ON d.number = s.number WHERE d.time > '{timerange}' ORDER BY s.number;"
 
     # create query
@@ -345,4 +345,4 @@ def get_weather():
 
 if __name__ == "__main__":
     # app.logger.debug("hello")
-    app.run()
+    app.run(host="0.0.0.0", port=5000, debug=True)
